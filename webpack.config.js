@@ -1,0 +1,39 @@
+var path = require('path');
+
+var config = {
+    defaultPath: '/dist',
+    path: {
+        src: '/src',
+        dist: '/dist'
+    }
+};
+
+module.exports = {
+    entry: {
+        Cesiums: [__dirname + config.path.src]
+    },
+
+    output: {
+        publicPath: config.defaultPath,
+        path: path.join(__dirname, config.path.dist),
+        filename: '[name].js',
+        libraryTarget: 'umd',
+        // `library` 声明全局变量
+        library: '[name]'
+    },
+    devtool: 'eval-source-map',//可以保证调试行对应
+    module: {
+        rules: [
+            {
+                test: /\.js$/,
+                exclude: /(node_modules|bower_components)/,
+                use: {
+                    loader: 'babel-loader',
+                    options: {
+                        presets: ['es2015']
+                    }
+                }
+            }
+        ]
+    },
+};
