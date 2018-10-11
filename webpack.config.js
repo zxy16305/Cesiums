@@ -12,7 +12,9 @@ module.exports = {
     entry: {
         Cesiums: [__dirname + config.path.src]
     },
-
+    externals: {
+        Cesium: 'Cesium'
+    },
     output: {
         publicPath: config.defaultPath,
         path: path.join(__dirname, config.path.dist),

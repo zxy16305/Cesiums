@@ -1,7 +1,6 @@
-export {rename} from "./Test1";
-export {rename2} from "./Test2";
+/**
+ * 用于组织管理输出
+ */
 
-// rename();
-// rename2();
-
-
+export {Cameras} from "./Scene/Cameras"
+export {Cartesian3s} from "./Core/Cartesian3s"
