@@ -1,7 +1,5 @@
 var path = require('path');
-const UglifyJsPlugin = require("uglifyjs-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
 
 var config = {
     defaultPath: '/dist',
@@ -12,16 +10,6 @@ var config = {
 };
 
 module.exports = {
-    optimization:{
-        minimizer: [
-            new UglifyJsPlugin({
-                cache: true,
-                parallel: true,
-                sourceMap: true // set to true if you want JS source maps
-            }),
-            new OptimizeCSSAssetsPlugin({})
-        ]
-    },
     entry: {
         Cesiums: [__dirname + config.path.src]
     },
@@ -31,12 +19,12 @@ module.exports = {
     output: {
         publicPath: config.defaultPath,
         path: path.join(__dirname, config.path.dist),
-        filename: '[name].min.js',
+        filename: '[name].js',
         libraryTarget: 'umd',
         // `library` 声明全局变量
         library: '[name]'
     },
-    devtool: 'source-map',//生产环境源码分离
+    devtool: 'eval-source-map',//可以保证调试行对应
     module: {
         rules: [
             {
@@ -48,10 +36,10 @@ module.exports = {
                         presets: ['es2015']
                     }
                 }
-            },{
+            }, {
                 test: /\.css$/,
                 exclude: /(node_modules|bower_components)/,
-                use:[{
+                use: [{
                     loader: MiniCssExtractPlugin.loader,
                     options: {
                         // you can specify a publicPath here
@@ -59,14 +47,14 @@ module.exports = {
                         publicPath: '../'
                     }
                 },
-                "css-loader"]
+                    "css-loader"]
             }
         ]
     },
     plugins: [
         new MiniCssExtractPlugin({
-            filename: "[name].min.css",
-            chunkFilename: "[id].min.css"
+            filename: "[name].css",
+            chunkFilename: "[id].css"
         })
     ]
 };
