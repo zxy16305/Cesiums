@@ -38,10 +38,14 @@ import "./ThirdParty/DrawHelper.css"
 //遍历script 获取src路径
 function getPathDir() {
     let scriptSrc = "";
-    document.querySelectorAll("script").forEach(function (script) {
-        if(script.src.indexOf("Cesiums.js") !== -1)
-            scriptSrc = script.src;
-    })
-    return scriptSrc.match(/(.+)\/(Cesiums.js.*)/)[1];
+    let nodeList = document.querySelectorAll("script");
+    for(let i = 0; i< nodeList.length;i++){
+        if(/Cesiums[^\/]*$/.test(nodeList.item(i).src)){
+            scriptSrc = nodeList.item(i).src;
+            break;
+        }
+    }
+
+    return scriptSrc.match(/(.+)\/(Cesiums.js.*|Cesiums.min.js)/)[1];
 }
 

@@ -95,6 +95,12 @@ function next() {
             font: '24px Helvetica',
             text: '点击环形特效'
         }
+    }, {
+        modelColor: Cesium.Color.RED,
+        ring: {
+            timePeriod: 5,
+            relativeSize: 1
+        }
     });
     Cesiums.eventSystem.setView(viewer);
 
@@ -106,16 +112,18 @@ function next() {
     entity.setViewer(viewer);
     // viewer.entities.add(entity.parent)
 
-    let flyCancelFun ;
+    let flyCancelFun;
 
     entity.onClick(function (position) {
-        this.onSelected = !this.onSelected;
-        if(this.onSelected){
-             flyCancelFun = Cesiums.Cameras.flyAroundPosition(viewer.scene.camera, pos, 50 ,30,0.2);
-        }else{
-            typeof flyCancelFun === "function" && flyCancelFun();
-        }
+        this.selected = !this.selected;
     });
+
+    entity.onSelect(() => {
+        flyCancelFun = Cesiums.Cameras.flyAroundPosition(viewer.scene.camera, pos, 50, 30, 0.2);
+    })
+    entity.onRelease(() => {
+        typeof flyCancelFun === "function" && flyCancelFun();
+    })
 
 
     // viewer.trackedEntity = entity;
