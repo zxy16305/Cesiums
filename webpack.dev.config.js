@@ -58,9 +58,9 @@ module.exports = {
             filename: "[name].css",
             chunkFilename: "[id].css"
         }),
-        new CopyWebpackPlugin([{
-            from: "./resources/**",
-            to: "./"
-        }])
+        // new CopyWebpackPlugin([{
+        //     from: "./resources/**",
+        //     to: "./"
+        // }])
     ]
 };

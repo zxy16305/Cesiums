@@ -5,12 +5,13 @@ let viewer;
 
 var longitude = 120.12674008947434;
 var latitude = 30.857729240430604;
-var height = 40;
+var height = 20;
 var heading = 0;
 
 init();
 
 function init() {
+    Cesiums.cesium1_50Patch();
     viewer = new Cesium.Viewer(document.getElementById("map"));
     viewer.cesiumWidget.screenSpaceEventHandler.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_DOUBLE_CLICK)
     setMap();
@@ -35,7 +36,7 @@ function setMap() {
     setBaseMap('http://www.google.cn/maps/vt?lyrs=s&x={x}&y={y}&z={z}', 'Google Map', ["mt0", "mt1", "mt2", "mt3"], true);
 
     var tileset = new Cesium.Cesium3DTileset({
-        url: 'http://192.168.100.233:9002/api/folder/9c22855864f340c88db15b69a94c05c3/tileset.json'
+        url: 'http://localhost:8080/3D_Tiles/tileset.json'
     });
     viewer.scene.primitives.add(tileset);
     tileset.readyPromise.then(function (argument) {
@@ -47,7 +48,7 @@ function setMap() {
 
         var boundingSphere = tileset.boundingSphere;
         var cartographic = Cesium.Cartographic.fromCartesian(boundingSphere.center);
-        var surface = Cesium.Cartesian3.fromRadians(cartographic.longitude, cartographic.latitude, cartographic.height);
+        var surface = Cesium.Cartesian3.fromRadians(cartographic.longitude, cartographic.latitude, cartographic.height );
         var translation = Cesium.Cartesian3.subtract(position, surface, new Cesium.Cartesian3());
         tileset.modelMatrix = Cesium.Matrix4.fromTranslation(translation);
         ;
@@ -102,7 +103,7 @@ function next() {
             relativeSize: 1
         }
     });
-    Cesiums.eventSystem.setView(viewer);
+    Cesiums.EventSystemInstance.setViewer(viewer);
 
     // Cesiums.eventSystem.onLeftClick(entity, function (e) {
     //     console.log("left Click!");
@@ -125,6 +126,36 @@ function next() {
         typeof flyCancelFun === "function" && flyCancelFun();
     })
 
+    //事件接管
+    let eventSystem = Cesiums.EventSystemInstance.getInstance();
+
+    // eventSystem.setListener(entity, Cesiums.EventType.LEFT_CLICK,function (position) {
+    //     console.log(["left click", position]);
+    // })
+    eventSystem.setListener(entity, Cesiums.EventType.LEFT_DOUBLE_CLICK,function (position) {
+        console.log(["leftDoubleClick", position]);
+    })
+    eventSystem.setListener(entity, Cesiums.EventType.MOUSE_MOVE,function (position) {
+        console.log(["mouseMove", position]);
+    })
+    eventSystem.setListener(entity, Cesiums.EventType.LEFT_UP,function (position) {
+        console.log(["leftUp", position]);
+    })
+    eventSystem.setListener(entity, Cesiums.EventType.LEFT_DOWN,function (position) {
+        console.log(["leftDown", position]);
+    })
+    eventSystem.setListener(entity, Cesiums.EventType.DRAW_START,function (position) {
+        console.log(["drawStart", position]);
+    })
+    eventSystem.setListener(entity, Cesiums.EventType.DRAW,function (position) {
+        console.log(["draw", position]);
+    })
+    eventSystem.setListener(entity, Cesiums.EventType.DRAW_END,function (position) {
+        console.log(["drawEnd", position]);
+    })
+    eventSystem.setListener(entity, Cesiums.EventType.MOUSE_MOVE_OUT,function (position) {
+        console.log(["mouseMoveOut", position]);
+    })
 
     // viewer.trackedEntity = entity;
     // setTimeout(flyAroundPosition, 3000)
@@ -134,6 +165,28 @@ function next() {
     //     destination: Cesiums.Cartesian3s.formatHeightPlus(pos,5000)
     // })
 
+    var pos1 = Cesium.Cartesian3.fromDegrees(longitude, latitude, 40);
+    let editableEntity = new Cesiums.EditableEntity({
+        id: 'icon-123451',
+        position: pos1,
+        // 图标
+        billboard: {
+            image: 'images/icon_dl.png'
+        },
+        // 文字标签
+        label: {
+            pixelOffset: new Cesium.Cartesian2(0, 30),
+            fillColor: Cesium.Color.WHITE,
+            outlineColor: new Cesium.Color.fromCssColorString('#191970'),
+            outlineWidth: 2,
+            style: Cesium.LabelStyle.FILL_AND_OUTLINE,
+            font: '24px Helvetica',
+            text: '可移动'
+        }
+    });
+    editableEntity.setViewer(viewer)
+
+    editableEntity.setEditable()
 
 }
 

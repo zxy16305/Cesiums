@@ -49,4 +49,11 @@ export class Cartesian3s {
         return Cesium.Cartesian3.fromRadians(fromCartesian.longitude, fromCartesian.latitude, height);
     }
 
+    static getCenter(positions){
+        let sum = new Cesium.Cartesian3();
+        positions.forEach((position)=>{
+            Cesium.Cartesian3.add(sum, position, sum)
+        })
+        return Cesium.Cartesian3.divideByScalar(sum,positions.length,sum);
+    }
 }

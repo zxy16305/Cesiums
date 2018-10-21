@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>南京邮电大学倾斜摄影三维地图</title>
+    <script src="../lib/RCesium-1.50-build/Cesium.js"></script>
+    <style>
+        @import url(../lib/RCesium-1.50-build/Widgets/widgets.css);
+        @import url(../lib/RCesium-1.50-build/Widgets/lighter.css);
+        body, html {
+            padding: 0;
+            margin: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            color: #eee;
+            overflow: hidden;
+        }
+        #map3d {
+            display: block;
+            position: absolute;
+            top: 0;
+            left: 0;
+            border: none;
+            width: 100%;
+            height: 100%;
+        }
+        .tool-box {
+            position: absolute;
+            background: #000;
+            padding: 10px 20px;
+            margin: 5px;
+            border-radius: 5px;
+        }
+        .tool-box select,
+        .tool-box button {
+            height: 23px;
+        }
+        /* 隐藏版权信息 */
+        .cesium-viewer .cesium-widget-credits { display: none; }
+    </style>
+</head>
+<body>
+<div id="map3d"></div>
+
+<div id="toolbar" class="tool-box">
+    <button id="tbtn-draw-rect" data-bind="click: doStartDraw">开始绘制</button>
+    <select id="tsel-draw-type" data-bind="value: drawType, valueUpdate: 'input'">
+        <option value="box">空间盒方式</option>
+        <option value="rect">矩形方式</option>
+    </select>
+    <label data-bind="visible: drawType=='box'">
+        <input type="checkbox" data-bind="checked: showBox, valueUpdate: 'click'">
+        <span>显示盒子</span>
+    </label>
+</div>
+
+<script src="../src/ThirdParty/DrawHelper.js"></script>
+<script src="../dist/Cesiums.js"></script>
+<script src="box-demo.js"></script>
+</body>
+</html>

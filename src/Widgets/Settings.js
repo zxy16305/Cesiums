@@ -12,11 +12,7 @@ export class Settings {
         viewer.cesiumWidget.screenSpaceEventHandler.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_DOUBLE_CLICK)
     }
 
-    static cancelTilt(viewer){
-        viewer.scene.screenSpaceCameraController.enableTilt = false;
-    }
-
-    static cancelRotate(viewer){
-        viewer.scene.screenSpaceCameraController.enableRotate = false;
+    static enableRotation(viewer,enable = true){
+        viewer.scene.screenSpaceCameraController.enableRotate = enable;
     }
 }

@@ -1,5 +1,5 @@
 import * as Cesium from "Cesium";
-import {eventSystem} from "../Core/EventSystem";
+import {EventSystemInstance} from "../Core/EventSystem";
 
 /**
  * 基础entity
@@ -14,10 +14,12 @@ export class BaseEntity extends Cesium.Entity {
 
     setViewer(viewer) {
         viewer.entities.add(this);
+        this._viewer = viewer;
     }
 
     removeViewer(viewer) {
         viewer.entities.remove(this);
+        delete this._viewer;
     }
 
     display() {
@@ -60,7 +62,7 @@ export class BaseEntity extends Cesium.Entity {
     }
 
     initEvent() {
-        eventSystem.onLeftClick(this, (position) => {
+        EventSystemInstance.getInstance().onLeftClick(this, (position) => {
             // this.onSelected ^= true;//反向
             if (typeof this.onClickCallback === "function") {
                 this.onClickCallback(position);

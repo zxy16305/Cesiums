@@ -9,12 +9,13 @@ import "./Scene/Cameras.css"
 
 /**Core*/
 export {Cartesian3s} from "./Core/Cartesian3s"
-export {eventSystem} from "./Core/EventSystem"
+export {EventSystemInstance,EventType} from "./Core/EventSystem"
 
 
 /**DataSources*/
 export {DazzlingLabelEntity} from "./DataSources/DazzlingLabelEntity"
 export {EditableEntity} from "./DataSources/EditableEntity"
+export {BuildingHightlightBuilder} from "./DataSources/BuildingHightlightBuilder"
 
 
 /**Util**/
@@ -23,6 +24,7 @@ export const OfficialUtils = officialUtils;
 
 /**Widgets**/
 export {Settings} from  "./Widgets/Settings";
+export {cesium1_50Patch} from  "./Widgets/Patchs";
 
 
 /*ThirdParty*/

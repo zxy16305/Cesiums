@@ -37,7 +37,11 @@
         return viewer.scene.camera.pickEllipsoid(position);
     };
 
-    // constructor
+    /**
+     * @constructor
+     * @param cesiumWidget
+     * @private
+     */
     function _(cesiumWidget) {
         this._viewer = cesiumWidget;
         this._scene = cesiumWidget.scene;
@@ -81,10 +85,15 @@
         var mouseOutObject;
         handler.setInputAction(
             function (movement) {
+                let markPosition = {
+                    x: movement.endPosition.x,
+                    y: movement.endPosition.y
+                };
+
                 if (_self._handlersMuted == true) return;
-                var pickedObject = scene.pick(movement.endPosition);
+                var pickedObject = scene.pick(markPosition);
                 if (mouseOutObject && (!pickedObject || mouseOutObject != pickedObject.primitive)) {
-                    !(mouseOutObject.isDestroyed && mouseOutObject.isDestroyed()) && mouseOutObject.mouseOut(movement.endPosition);
+                    !(mouseOutObject.isDestroyed && mouseOutObject.isDestroyed()) && mouseOutObject.mouseOut(markPosition);
                     mouseOutObject = null;
                 }
                 if (pickedObject && pickedObject.primitive) {
@@ -93,7 +102,7 @@
                         mouseOutObject = pickedObject;
                     }
                     if (pickedObject.mouseMove) {
-                        pickedObject.mouseMove(movement.endPosition);
+                        pickedObject.mouseMove(markPosition);
                     }
                 }
             }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
