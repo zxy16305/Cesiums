@@ -98,17 +98,11 @@ class EventSystem {
                         }
                     } else {
                         let lastObject = mouseMoveObject;
-                        console.log([ lastObject, mouseMoveObject, markPosition])
+                        // console.log([ lastObject, mouseMoveObject, markPosition])
                         let currentMouseMoveObject = this.callPrimitiveCallback(EventType.MOUSE_MOVE, markPosition);
-                        console.log([currentMouseMoveObject, lastObject, mouseMoveObject, markPosition])
+                        // console.log([currentMouseMoveObject, lastObject, mouseMoveObject, markPosition])
                         if (currentMouseMoveObject !== lastObject) {
                             mouseMoveObject = currentMouseMoveObject;
-
-                            // this._cunsumeMoveOutObject.push({
-                            //     obj: lastObject,
-                            //     position: movementStep.endPosition
-                            // })
-                            // this.consumeMoveOut();
                             lastObject && this.callPrimitiveCallbackCurrent(lastObject, EventType.MOUSE_MOVE_OUT, markPosition)
                         }
                     }
@@ -165,7 +159,6 @@ class EventSystem {
             cunsumeObjects.forEach((obj) => {
                 obj.obj && this.callPrimitiveCallbackCurrent(obj.obj, EventType.MOUSE_MOVE_OUT, obj.position)
             })
-
 
             consumeMoveOutFlag = true;
         }

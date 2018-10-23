@@ -36,7 +36,7 @@ function setMap() {
     setBaseMap('http://www.google.cn/maps/vt?lyrs=s&x={x}&y={y}&z={z}', 'Google Map', ["mt0", "mt1", "mt2", "mt3"], true);
 
     var tileset = new Cesium.Cesium3DTileset({
-        url: 'http://localhost:8080/3D_Tiles/tileset.json'
+        url: 'http://localhost:9002/api/folder/a2a84b6f45214ab2b9018ca4842208a1/tileset.json'
     });
     viewer.scene.primitives.add(tileset);
     tileset.readyPromise.then(function (argument) {

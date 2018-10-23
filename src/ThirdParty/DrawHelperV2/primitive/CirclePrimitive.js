@@ -1,11 +1,14 @@
 import * as Cesium from "Cesium";
 import {ChangeablePrimitive} from "./ChangeablePrimitive";
 import {copyOptions} from "../util/util";
-import {defaultSurfaceOptions} from "../constant/DefaultValue";
+import {defaultSurfaceOptions, dragBillboard,ellipsoid} from "../constant/DefaultValue";
+import {enhanceWithListeners} from "../util/EventHelper";
+
 
 export class CirclePrimitive extends ChangeablePrimitive {
-    constructor(options) {
+    constructor(options, drawHelper) {
         super();
+        this._drawHelper = drawHelper;
 
         if (!(Cesium.defined(options.center) && Cesium.defined(options.radius))) {
             throw new Cesium.DeveloperError('Center and radius are required');
@@ -16,6 +19,9 @@ export class CirclePrimitive extends ChangeablePrimitive {
         this.initialiseOptions(options);
 
         this.setRadius(options.radius);
+        drawHelper.registerEditableShape(this);
+        enhanceWithListeners(this);
+
     }
 
     setCenter(center) {
@@ -56,6 +62,109 @@ export class CirclePrimitive extends ChangeablePrimitive {
             center: this.getCenter(),
             radius: this.getRadius()
         });
+    }
+
+    setEditMode(editMode = true) {
+        if (this.setEditMode) {
+            return;
+        }
+        var drawHelper = this._drawHelper;
+        var circle = this;
+        var scene = drawHelper._scene;
+
+        const getMarkerPositions = () => {
+            return this.getCircleCartesianCoordinates(Cesium.Math.PI_OVER_TWO);
+        }
+
+        const onEdited = () => {
+            this.executeListeners({
+                name: 'onEdited',
+                center: this.getCenter(),
+                radius: this.getRadius()
+            });
+        }
+
+        circle.asynchronous = false;
+
+        drawHelper.registerEditableShape(circle);
+
+        circle.setEditMode = function (editMode) {
+            // if no change
+            if (this._editMode == editMode) {
+                return;
+            }
+            drawHelper.disableAllHighlights();
+            // display markers
+            if (editMode) {
+                // make sure all other shapes are not in edit mode before starting the editing of this shape
+                drawHelper.setEdited(this);
+                var _self = this;
+                // create the markers and handlers for the editing
+                if (this._markers == null) {
+                    var thisDragBillboard = this.dragBillboard ? this.dragBillboard : dragBillboard;
+
+                    var markers = new _.BillboardGroup(drawHelper, thisDragBillboard);
+
+                    var handleMarkerChanges = {
+                        dragHandlers: {
+                            onDrag: function (index, position) {
+                                circle.setRadius(Cesium.Cartesian3.distance(circle.getCenter(), position));
+                                markers.updateBillboardsPositions(getMarkerPositions());
+                            },
+                            onDragEnd: function (index, position) {
+                                onEdited();
+                            }
+                        },
+                        tooltip: function () {
+                            return "Drag to change the radius";
+                        }
+                    };
+                    markers.addBillboards(getMarkerPositions(), handleMarkerChanges);
+                    this._markers = markers;
+                    // add a handler for clicking in the globe
+                    this._globeClickhandler = new Cesium.ScreenSpaceEventHandler(scene.canvas);
+                    this._globeClickhandler.setInputAction(
+                        function (movement) {
+                            var pickedObject = scene.pick(movement.position);
+                            if (!(pickedObject && pickedObject.primitive)) {
+                                _self.setEditMode(false);
+                            }
+                        }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
+
+                    // set on top of the polygon
+                    markers.setOnTop();
+                }
+                this._editMode = true;
+            } else {
+                if (this._markers != null) {
+                    this._markers.remove();
+                    this._markers = null;
+                    this._globeClickhandler.destroy();
+                }
+                this._editMode = false;
+            }
+        }
+
+        circle.setHighlighted = setHighlighted;
+
+        enhanceWithListeners(circle);
+
+        circle.setEditMode(false);
+    }
+
+    getCircleCartesianCoordinates(granularity) {
+        var geometry = Cesium.CircleOutlineGeometry.createGeometry(new Cesium.CircleOutlineGeometry({
+            ellipsoid: ellipsoid,
+            center: this.getCenter(),
+            radius: this.getRadius(),
+            granularity: granularity
+        }));
+        var count = 0, value, values = [];
+        for (; count < geometry.attributes.position.values.length; count += 3) {
+            value = geometry.attributes.position.values;
+            values.push(new Cesium.Cartesian3(value[count], value[count + 1], value[count + 2]));
+        }
+        return values;
     }
 
 }

@@ -50,7 +50,9 @@ export class BuildingHightlightBuilder {
                 geometry: Cesium.PolygonGeometry.fromPositions({
                     vertexFormat: Cesium.PerInstanceColorAppearance.VERTEX_FORMAT,
                     positions: this._position,
-                    extrudedHeight: 100
+                    extrudedHeight: 100,
+                    height: -50,
+                    closeBottom: true
                 }),
                 attributes: {
                     color: Cesium.ColorGeometryInstanceAttribute.fromColor(this._color),

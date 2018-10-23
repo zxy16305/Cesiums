@@ -1,17 +1,24 @@
 import * as Cesium from "Cesium";
 import {ChangeablePrimitive} from "./ChangeablePrimitive";
 import {copyOptions} from "../util/util";
-import {defaultSurfaceOptions} from "../constant/DefaultValue";
+import {defaultSurfaceOptions,ellipsoid} from "../constant/DefaultValue";
+import {enhanceWithListeners} from "../util/EventHelper";
+import {PolySharpPrimitive} from "./PolySharpPrimitive";
 
 
-export class PolygonPrimitive extends ChangeablePrimitive {
-    constructor(options) {
+export class PolygonPrimitive extends PolySharpPrimitive {
+    constructor(options,drawHelper) {
         super();
         options = copyOptions(options, defaultSurfaceOptions);
+
+        this._drawHelper = drawHelper;
 
         this.initialiseOptions(options);
 
         this.isPolygon = true;
+        drawHelper.registerEditableShape(this);
+        enhanceWithListeners(this);
+
     }
 
     setPositions(positions) {

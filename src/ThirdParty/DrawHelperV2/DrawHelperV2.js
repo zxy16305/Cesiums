@@ -4,11 +4,17 @@
 import * as Cesium from "Cesium";
 import {BillboardGroup} from "./primitive/BillboardGroup";
 import {Tooltip} from "./widget/Tooltip";
-import {enhanceWithListeners} from "./util/EventHelper";
+import {enhanceWithListeners, setListener} from "./util/EventHelper";
+import {CirclePrimitive} from "./primitive/CirclePrimitive";
+import {EditableBillboard} from "./primitive/EditableBillboard";
+import {EllipsePrimitive} from "./primitive/EllipsePrimitive";
+import {ExtentPrimitive} from "./primitive/ExtentPrimitive";
+import {PolygonPrimitive} from "./primitive/PolygonPrimitive";
+import {PolylinePrimitive} from "./primitive/PolylinePrimitive";
 
 //todo 用EventSystem接管drawHelper的事件
 export class DrawHelper {
-    constructor(viewer){
+    constructor(viewer) {
         this._viewer = viewer;
         this._scene = viewer.scene;
         this._tooltip = new Tooltip(viewer.container);
@@ -78,32 +84,78 @@ export class DrawHelper {
         return markers;
     }
 
-    startDrawingMarker(options){
+    startDrawingMarker(options) {
 
     }
 
-    startDrawingPolygon(options){
+    startDrawingPolygon(options) {
 
     }
 
-    startDrawingPolyline(options){
+    startDrawingPolyline(options) {
 
     }
 
-    startDrawingPolyshape(options){
+    startDrawingPolyshape(options) {
 
     }
 
-    startDrawingExtent(options){
+    startDrawingExtent(options) {
 
     }
 
-    startDrawingCircle(options){
+    startDrawingCircle(options) {
 
     }
 
-    enhancePrimitives(){
+    enhancePrimitives() {
 
+    }
+
+
+    createEditableCirclePrimitive(options) {
+        return new CirclePrimitive(options, this);
+    }
+
+    createEditableBillboard(options) {
+        return new EditableBillboard(options, this.viewer);
+    }
+
+    createEditableEllipsePrimitive(options) {
+        return new EllipsePrimitive(options, this);
+    }
+
+    createEditableExtentPrimitive(options) {
+        return new ExtentPrimitive(options, this);
+    }
+
+    createEditablePolygonPrimitive(options) {
+        return new PolygonPrimitive(options, this);
+    }
+
+    createEditablePolylinePrimitive(options) {
+        return new PolylinePrimitive(options, this);
+    }
+
+    /**
+     * 绑定触发编辑的点击事件
+     * @param surface
+     */
+    registerEditableShape(surface){
+        setListener(surface, 'mouseMove', function (position) {
+            surface.setHighlighted(true);
+            if (!surface._editMode) {
+                this._tooltip.showAt(position, "Click to edit this shape");
+            }
+        });
+        // hide the highlighting when mouse is leaving the polygon
+        setListener(surface, 'mouseOut', function (position) {
+            surface.setHighlighted(false);
+            this._tooltip.setVisible(false);
+        });
+        setListener(surface, 'leftClick', function (position) {
+            surface.setEditMode(true);
+        });
     }
 
 
@@ -138,6 +190,4 @@ export class DrawHelper {
     set surfaces(value) {
         this._surfaces = value;
     }
-
-
 }

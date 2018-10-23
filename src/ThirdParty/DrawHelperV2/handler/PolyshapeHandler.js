@@ -111,6 +111,7 @@ export class PolyshapeHandler extends BaseHandler {
                 }
             }
         }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
-
     }
+
+
 }

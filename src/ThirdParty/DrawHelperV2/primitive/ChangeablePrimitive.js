@@ -1,6 +1,7 @@
 import * as Cesium from "Cesium";
 import {fillOptions} from "../util/util"
 
+
 export class ChangeablePrimitive {
     initialiseOptions(options) {
         fillOptions(this, options)
@@ -163,5 +164,36 @@ export class ChangeablePrimitive {
 
     }
 
+    /**
+     * 部分子类需要重写
+     * @param highlighted
+     */
+    setHighlighted(highlighted) {
+        var drawHelper = this._drawHelper;
+
+        // if no change
+        // if already highlighted, the outline polygon will be available
+        if (this._highlighted && this._highlighted == highlighted) {
+            return;
+        }
+        // disable if already in edit mode
+        if (this._editMode === true) {
+            return;
+        }
+        this._highlighted = highlighted;
+        // highlight by creating an outline polygon matching the polygon points
+        if (highlighted) {
+            // make sure all other shapes are not highlighted
+            drawHelper.setHighlighted(this);
+            this._strokeColor = this.strokeColor;
+            this.setStrokeStyle(Cesium.Color.fromCssColorString('white'), this.strokeWidth);
+        } else {
+            if (this._strokeColor) {
+                this.setStrokeStyle(this._strokeColor, this.strokeWidth);
+            } else {
+                this.setStrokeStyle(undefined, undefined);
+            }
+        }
+    }
 
 }

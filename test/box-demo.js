@@ -66,7 +66,7 @@
     var heading = 0;
     // 加载 3d-tiles 模型资源到场景中
     var tileset = new Cesium.Cesium3DTileset({
-        url: 'http://localhost:8080/3D_Tiles/tileset.json'
+        url: 'http://localhost:9002/api/folder/a2a84b6f45214ab2b9018ca4842208a1/tileset.json'
     });
     viewer.scene.primitives.add(tileset);
     tileset.readyPromise.then(function(argument) {
@@ -333,7 +333,7 @@
             .setOnClick(function (position, primitive) {
                 console.log([position,primitive])
             })
-            .setColor(Cesium.Color.TEAL.withAlpha(0.5))
+            .setColor(Cesium.Color.TEAL.withAlpha(0))
             .build()
         scene.primitives.add(primivtive)
 
