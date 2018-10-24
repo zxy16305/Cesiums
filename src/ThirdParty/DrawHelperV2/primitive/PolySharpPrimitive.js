@@ -1,5 +1,6 @@
 import {ChangeablePrimitive} from "./ChangeablePrimitive";
 import {dragBillboard,ellipsoid} from "../constant/DefaultValue";
+import {BillboardGroup} from "./BillboardGroup";
 
 export class PolySharpPrimitive extends ChangeablePrimitive{
     setEditMode(editMode = true){
@@ -19,8 +20,9 @@ export class PolySharpPrimitive extends ChangeablePrimitive{
             if (this._markers == null) {
                 var thisDragBillboard = this.dragBillboard? this.dragBillboard: dragBillboard;
                 var thisDragHalfBillboard = this.dragHalfBillboard? this.dragHalfBillboard: dragBillboard;
-                var markers = new _.BillboardGroup(drawHelper, thisDragBillboard);
-                var editMarkers = new _.BillboardGroup(drawHelper, thisDragHalfBillboard);
+
+                var markers = new BillboardGroup(drawHelper, thisDragBillboard);
+                var editMarkers = new BillboardGroup(drawHelper, thisDragHalfBillboard);
 
 
                 var handleMarkerChanges = {

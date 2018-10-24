@@ -42,7 +42,7 @@ export class DrawHelperWidget {
         let scene = drawHelper._scene;
 
 
-        options.buttons.indexOf("marker") !== -1 && createIconDiv('marker', options.markerIcon, 'Click to start drawing a 2D marker',  () =>{
+        options.buttons.indexOf("marker") !== -1 && createIconDiv(toolbar, 'marker', options.markerIcon, 'Click to start drawing a 2D marker',  () =>{
             typeof options.clickCallback === 'function' &&
             options.clickCallback({
                 name: 'markerClick'
@@ -56,7 +56,7 @@ export class DrawHelperWidget {
             });
         })
 
-        options.buttons.indexOf("polyline") !== -1 && createIconDiv('polyline', options.polylineIcon, 'Click to start drawing a 2D polyline',  ()=> {
+        options.buttons.indexOf("polyline") !== -1 && createIconDiv(toolbar, 'polyline', options.polylineIcon, 'Click to start drawing a 2D polyline',  ()=> {
             typeof options.clickCallback === 'function' &&
             options.clickCallback({
                 name: 'polylineClick'
@@ -70,7 +70,7 @@ export class DrawHelperWidget {
             });
         })
 
-        options.buttons.indexOf("polygon") !== -1 && createIconDiv('polygon', options.polygonIcon, 'Click to start drawing a 2D polygon',  () =>{
+        options.buttons.indexOf("polygon") !== -1 && createIconDiv(toolbar, 'polygon', options.polygonIcon, 'Click to start drawing a 2D polygon',  () =>{
             typeof options.clickCallback === 'function' &&
             options.clickCallback({
                 name: 'polygonClick'
@@ -84,7 +84,7 @@ export class DrawHelperWidget {
             });
         })
 
-        options.buttons.indexOf("extent") !== -1 && createIconDiv('extent', options.extentIcon, 'Click to start drawing an Extent',  ()=> {
+        options.buttons.indexOf("extent") !== -1 && createIconDiv(toolbar, 'extent', options.extentIcon, 'Click to start drawing an Extent',  ()=> {
             typeof options.clickCallback === 'function' &&
             options.clickCallback({
                 name: 'extentClick'
@@ -98,7 +98,7 @@ export class DrawHelperWidget {
             });
         })
 
-        options.buttons.indexOf("circle") !== -1 && createIconDiv('circle', options.circleIcon, 'Click to start drawing a Circle',  ()=> {
+        options.buttons.indexOf("circle") !== -1 && createIconDiv(toolbar, 'circle', options.circleIcon, 'Click to start drawing a Circle',  ()=> {
             typeof options.clickCallback === 'function' &&
             options.clickCallback({
                 name: 'circleClick'
@@ -119,7 +119,7 @@ export class DrawHelperWidget {
         toolbar.appendChild(div);
 
         options.buttons.indexOf("clear") !== -1 &&
-        createIconDiv('clear', options.clearIcon, 'Remove all primitives',  ()=> {
+        createIconDiv(toolbar, 'clear', options.clearIcon, 'Remove all primitives',  ()=> {
             typeof options.clickCallback === 'function' &&
             options.clickCallback({
                 name: 'clearClick'

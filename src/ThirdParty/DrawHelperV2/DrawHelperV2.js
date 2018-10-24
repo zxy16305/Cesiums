@@ -11,10 +11,20 @@ import {EllipsePrimitive} from "./primitive/EllipsePrimitive";
 import {ExtentPrimitive} from "./primitive/ExtentPrimitive";
 import {PolygonPrimitive} from "./primitive/PolygonPrimitive";
 import {PolylinePrimitive} from "./primitive/PolylinePrimitive";
+import {PolygonHandler} from "./handler/PolygonHandler";
+import {PolylineHandler} from "./handler/PolylineHandler";
+import {PolySharpPrimitive} from "./primitive/PolySharpPrimitive";
+import {PolyshapeHandler} from "./handler/PolyshapeHandler";
+import {ExtentHandler} from "./handler/ExtentHandler";
+import {CircleHandler} from "./handler/CircleHandler";
+import {copyOptions} from "./util/util";
+import {DrawHelperWidget} from "./widget/DrawHelperWidget";
+import {EventSystemInstance} from "../..";
 
 //todo 用EventSystem接管drawHelper的事件
 export class DrawHelper {
     constructor(viewer) {
+        this.eventSystem = EventSystemInstance.getInstance(viewer);
         this._viewer = viewer;
         this._scene = viewer.scene;
         this._tooltip = new Tooltip(viewer.container);
@@ -29,6 +39,10 @@ export class DrawHelper {
         enhanceWithListeners(this);
     }
 
+    addToolbar(container, options){
+        options = copyOptions(options, {container: container});
+        return new DrawHelperWidget(this, options);
+    }
 
     startDrawing(cleanUp) {
         // undo any current edit of shapes
@@ -89,23 +103,23 @@ export class DrawHelper {
     }
 
     startDrawingPolygon(options) {
-
+        new PolygonHandler().start(options,this);
     }
 
     startDrawingPolyline(options) {
-
+        new PolylineHandler().start(options,this);
     }
 
     startDrawingPolyshape(options) {
-
+        new PolyshapeHandler().start(options,this);
     }
 
     startDrawingExtent(options) {
-
+        new ExtentHandler().start(options,this);
     }
 
     startDrawingCircle(options) {
-
+        new CircleHandler().start(options,this);
     }
 
     enhancePrimitives() {
@@ -142,20 +156,35 @@ export class DrawHelper {
      * @param surface
      */
     registerEditableShape(surface){
-        setListener(surface, 'mouseMove', function (position) {
+        this.eventSystem.onMouseMove(surface,(position)=>{
             surface.setHighlighted(true);
             if (!surface._editMode) {
                 this._tooltip.showAt(position, "Click to edit this shape");
             }
-        });
-        // hide the highlighting when mouse is leaving the polygon
-        setListener(surface, 'mouseOut', function (position) {
+        })
+
+        this.eventSystem.onMouseMoveOut(surface,(position)=>{
             surface.setHighlighted(false);
             this._tooltip.setVisible(false);
-        });
-        setListener(surface, 'leftClick', function (position) {
+        })
+
+        this.eventSystem.onLeftClick(surface,()=>{
             surface.setEditMode(true);
-        });
+        })
+        // setListener(surface, 'mouseMove', function (position) {
+        //     surface.setHighlighted(true);
+        //     if (!surface._editMode) {
+        //         this._tooltip.showAt(position, "Click to edit this shape");
+        //     }
+        // });
+        // hide the highlighting when mouse is leaving the polygon
+        // setListener(surface, 'mouseOut', function (position) {
+        //     surface.setHighlighted(false);
+        //     this._tooltip.setVisible(false);
+        // });
+        // setListener(surface, 'leftClick', function (position) {
+        //     surface.setEditMode(true);
+        // });
     }
 
 

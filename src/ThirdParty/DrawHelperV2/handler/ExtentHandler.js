@@ -74,19 +74,19 @@ export class ExtentHandler extends BaseHandler {
 
     }
 
-    updateExtent(extent) {
+    updateExtent(value) {
         if (this.extent == null) {
-            this.extent = new _.ExtentPrimitive({
-                extent: extent,
+            this.extent = this.drawHelper.createEditableExtentPrimitive({
+                extent: value,
                 material: this.options.material,
-            });
+            })
             this.extent.asynchronous = false;
-            this.primitives.add(extent);
+            this.primitives.add(this.extent);
         }
-        this.extent.setExtent(extent);
-        this.extent.rectangle = extent;
+        this.extent.setExtent(value);
+        this.extent.rectangle = value;
         // update the markers
-        let corners = getExtentCorners(extent);
+        let corners = getExtentCorners(value);
         // create if they do not yet exist
         if (this.markers == null) {
             this.markers = new BillboardGroup(this.drawHelper, defaultBillboard);

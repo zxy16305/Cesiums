@@ -4,6 +4,7 @@ import {copyOptions} from "../util/util";
 import {defaultBillboard, defaultSurfaceOptions} from "../constant/DefaultValue";
 import {CirclePrimitive} from "../primitive/CirclePrimitive";
 import {BillboardGroup} from "../primitive/BillboardGroup";
+import {getCesiumHightZero} from "../util/constructHelper";
 
 export class CircleHandler extends BaseHandler {
     start(options, drawHelper) {
@@ -37,12 +38,18 @@ export class CircleHandler extends BaseHandler {
                 if (cartesian) {
                     if (circle == null) {
                         // create the circle
-                        circle = new CirclePrimitive({
+                        // circle = new CirclePrimitive({
+                        //     center: cartesian,
+                        //     radius: 0,
+                        //     asynchronous: false,
+                        //     material: options.material
+                        // });
+                        circle = drawHelper.createEditableCirclePrimitive({
                             center: cartesian,
                             radius: 0,
                             asynchronous: false,
                             material: options.material
-                        });
+                        })
                         primitives.add(circle);
                         markers = new BillboardGroup(drawHelper, defaultBillboard);
                         markers.addBillboards([cartesian]);

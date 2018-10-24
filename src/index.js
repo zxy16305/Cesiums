@@ -31,6 +31,8 @@ export {cesium1_50Patch} from  "./Widgets/Patchs";
 import * as drawHelper from "./ThirdParty/DrawHelper";
 export const DrawHelper = drawHelper;
 
+export {DrawHelper as DrawHelperV2} from "./ThirdParty/DrawHelperV2/DrawHelperV2"
+
 export {ChoiceHelper} from "./ThirdParty/ChoiceHelper"
 
 import "./ThirdParty/DrawHelper.css"

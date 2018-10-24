@@ -3,6 +3,7 @@ import {copyOptions} from "../util/util";
 import {defaultBillboard} from "../constant/DefaultValue";
 import {setListener} from "../util/EventHelper";
 import {EditableBillboard} from "./EditableBillboard";
+import {EventSystemInstance} from "../../..";
 
 
 export class BillboardGroup {
@@ -18,6 +19,7 @@ export class BillboardGroup {
         this._billboards = b;
         // keep an ordered list of billboards
         this._orderedBillboards = [];
+        this._evnetSystem = EventSystemInstance.getInstance();
     }
 
     createBillboard(position, callbacks) {
@@ -31,7 +33,7 @@ export class BillboardGroup {
             scale: 1.0,
             image: this._options.iconUrl,
             color: new Cesium.Color(1.0, 1.0, 1.0, 1.0)
-        },this._drawHelper._viewer);
+        },this,this._drawHelper._viewer);
 
         let billboard = this._billboards.add(editableBillboard);
 
@@ -50,7 +52,8 @@ export class BillboardGroup {
             }
 
             if (callbacks.dragHandlers) {
-                setListener(billboard, 'leftDown', (position) => {
+
+                setListener(billboard, 'leftDown', (position) => {//TODO 接入eventSystem
                     // TODO - start the drag handlers here
                     // create handlers for mouseOut and leftUp for the billboard and a mouseMove
                     const onDrag = (position) => {
@@ -108,6 +111,7 @@ export class BillboardGroup {
 
         return billboard;
     }
+
 
     insertBillboard(index, position, callbacks) {
         this._orderedBillboards.splice(index, 0, this.createBillboard(position, callbacks));

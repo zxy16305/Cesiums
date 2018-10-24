@@ -29,11 +29,11 @@ export const getExtentCorners = (value) => {
 }
 
 
-export const createIconDiv = (id, url, title, callback) => {
+export const createIconDiv = (container,id, url, title, callback) => {
     let div = document.createElement('DIV');
     div.className = 'button' + url;
     div.title = title;
-    toolbar.appendChild(div);
+    container.appendChild(div);
     div.onclick = callback;
     return div;
 }

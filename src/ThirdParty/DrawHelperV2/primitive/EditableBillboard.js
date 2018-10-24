@@ -3,8 +3,8 @@ import {EventSystemInstance} from "../../..";
 
 export class EditableBillboard extends Cesium.Billboard {
 
-    constructor(config, viewer) {
-        super(config);
+    constructor(config, billboardCollection,viewer) {
+        super(config,billboardCollection);
         this.viewer = viewer;
     }
 

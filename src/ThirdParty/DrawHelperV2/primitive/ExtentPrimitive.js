@@ -4,6 +4,7 @@ import {copyOptions} from "../util/util";
 import {defaultSurfaceOptions, dragBillboard,ellipsoid} from "../constant/DefaultValue";
 import {getExtent, getExtentCorners} from "../util/constructHelper";
 import {enhanceWithListeners} from "../util/EventHelper";
+import {BillboardGroup} from "./BillboardGroup";
 
 export class ExtentPrimitive extends ChangeablePrimitive {
     constructor(options,drawHelper) {
@@ -73,7 +74,7 @@ export class ExtentPrimitive extends ChangeablePrimitive {
                 var thisDragBillboard = this.dragBillboard? this.dragBillboard: dragBillboard;
                 var thisDragHalfBillboard = this.dragHalfBillboard? this.dragHalfBillboard: dragBillboard;
 
-                var markers = new _.BillboardGroup(thisDragBillboard,thisDragHalfBillboard);
+                var markers = new BillboardGroup(thisDragBillboard,thisDragHalfBillboard);
 
                 var handleMarkerChanges = {
                     dragHandlers: {

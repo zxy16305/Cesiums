@@ -15,13 +15,24 @@ export class PolyshapeHandler extends BaseHandler {
         let viewer = drawHelper.viewer;
         let primitives = scene.primitives;
         let tooltip = drawHelper.tooltip;
+        let mouseHandler = new Cesium.ScreenSpaceEventHandler(scene.canvas);
+
+        drawHelper.startDrawing(() => {
+                primitives && primitives.remove(poly);
+                markers && markers.remove();
+                mouseHandler && mouseHandler.destroy();
+                tooltip && tooltip.setVisible(false);
+            }
+        );
 
         let minPoints = isPolygon ? 3 : 2;
         let poly;
         if (isPolygon) {
-            poly = new PolygonPrimitive(options);
+            // poly = new PolygonPrimitive(options);
+            poly = drawHelper.createEditablePolygonPrimitive(options)
         } else {
-            poly = new PolylinePrimitive(options);
+            // poly = new PolylinePrimitive(options);
+            poly = drawHelper.createEditablePolylinePrimitive(options)
         }
 
         poly.asynchronous = false;
@@ -30,7 +41,6 @@ export class PolyshapeHandler extends BaseHandler {
         let positions = [];
         let markers = new BillboardGroup(drawHelper, defaultBillboard);
 
-        let mouseHandler = new Cesium.ScreenSpaceEventHandler(scene.canvas);
 
         mouseHandler.setInputAction((movement) => {
 
@@ -54,7 +64,7 @@ export class PolyshapeHandler extends BaseHandler {
             }
         }, Cesium.ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
         // Now wait for start
-        mouseHandler.setInputAction( (movement) =>{
+        mouseHandler.setInputAction((movement) => {
 
             let cartesian = options.strategy.pickStrategy(movement.position, viewer);
             cartesian = getCesiumHightZero(cartesian);
@@ -82,7 +92,7 @@ export class PolyshapeHandler extends BaseHandler {
 
         }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
 
-        mouseHandler.setInputAction( (movement)=> {
+        mouseHandler.setInputAction((movement) => {
             let position = movement.endPosition;
             if (position != null) {
                 if (positions.length == 0) {

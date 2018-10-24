@@ -3,6 +3,7 @@ import {ChangeablePrimitive} from "./ChangeablePrimitive";
 import {copyOptions} from "../util/util";
 import {defaultSurfaceOptions, dragBillboard,ellipsoid} from "../constant/DefaultValue";
 import {enhanceWithListeners} from "../util/EventHelper";
+import {EventSystemInstance} from "../../..";
 
 
 export class CirclePrimitive extends ChangeablePrimitive {
@@ -21,7 +22,7 @@ export class CirclePrimitive extends ChangeablePrimitive {
         this.setRadius(options.radius);
         drawHelper.registerEditableShape(this);
         enhanceWithListeners(this);
-
+        let eventsystem = EventSystemInstance.getInstance();
     }
 
     setCenter(center) {
