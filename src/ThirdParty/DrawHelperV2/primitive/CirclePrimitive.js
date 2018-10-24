@@ -43,7 +43,6 @@ export class CirclePrimitive extends ChangeablePrimitive {
     }
 
     getGeometry() {
-
         if (!(Cesium.defined(this.center) && Cesium.defined(this.radius))) {
             return;
         }

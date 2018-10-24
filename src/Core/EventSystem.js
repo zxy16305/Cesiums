@@ -4,7 +4,8 @@ import {typeContaines} from "../Util/TypeUtils"
 import {setListener} from "../ThirdParty/DrawHelperV2/util/EventHelper";
 import {Settings} from "../Widgets/Settings"
 import {Uuid} from "../Util/Uuid"
-
+import * as lodash from "../ThirdParty/lodash.min"
+import {Scenes} from "../Scene/Scenes";
 
 let consumeMoveOutFlag = true;
 
@@ -21,8 +22,10 @@ class EventSystem {
         this._frameRate = 60;
         this.updateMoveTime()
         this._cunsumeMoveOutObject = [];
+        this._enable = true;
         window.logs = [];
     }
+
 
     /**
      * 单地图
@@ -58,6 +61,22 @@ class EventSystem {
     }
 
     eventBind() {
+        const throttleV2 = (fn, mustRunDelay) => {
+            var timer = null;
+            var t_start;
+            return function () {
+                var _self = this;
+                var t_curr = +new Date();
+                if (!t_start) {
+                    t_start = t_curr;
+                }
+                if (t_curr - t_start >= mustRunDelay) {
+                    fn.apply(_self, arguments);
+                    t_start = t_curr;
+                }
+            };
+        };
+
         let moveCount = 0;
         let moveTimeout = null;
         let pressFlag = false;
@@ -67,51 +86,59 @@ class EventSystem {
         let handler = new Cesium.ScreenSpaceEventHandler(this.viewer.scene.canvas);
 
         handler.setInputAction((movement) => {
+            if (!this._enable) return;
             this.callPrimitiveCallback(EventType.LEFT_CLICK, movement.position);
         }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
 
         handler.setInputAction((movement) => {
+            if (!this._enable) return;
             this.callPrimitiveCallback(EventType.LEFT_DOUBLE_CLICK, movement.position);
         }, Cesium.ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
 
         handler.setInputAction((movementStep) => {
+            if (!this._enable) return;
 
+            lodash.throttle(() => {
+                // if (moveTimeout === null) {
 
-            if (moveTimeout === null) {
                 let markPosition = {
                     x: movementStep.endPosition.x,
                     y: movementStep.endPosition.y
                 };
                 // console.log(markPosition)
 
-                moveTimeout = setTimeout(() => {
-                    if (pressFlag) {
-                        //第一次按下
-                        if (firstFlag) {
-                            firstFlag = false;
-                            this.callPrimitiveCallbackCurrent(currentObject, EventType.DRAW_START, markPosition)
-                            if (currentObject && !this._enableRotation) {
-                                Settings.enableRotation(this.viewer, false);
-                            }
-                        } else {
-                            this.callPrimitiveCallbackCurrent(currentObject, EventType.DRAW, markPosition)
+                // moveTimeout = setTimeout(() => {
+                if (pressFlag) {
+                    //第一次按下
+                    if (firstFlag) {
+                        firstFlag = false;
+                        this.callPrimitiveCallbackCurrent(currentObject, EventType.DRAW_START, markPosition)
+                        if (currentObject && !this._enableRotation) {
+                            Settings.enableRotation(this.viewer, false);
                         }
                     } else {
-                        let lastObject = mouseMoveObject;
-                        // console.log([ lastObject, mouseMoveObject, markPosition])
-                        let currentMouseMoveObject = this.callPrimitiveCallback(EventType.MOUSE_MOVE, markPosition);
-                        // console.log([currentMouseMoveObject, lastObject, mouseMoveObject, markPosition])
-                        if (currentMouseMoveObject !== lastObject) {
-                            mouseMoveObject = currentMouseMoveObject;
-                            lastObject && this.callPrimitiveCallbackCurrent(lastObject, EventType.MOUSE_MOVE_OUT, markPosition)
-                        }
+                        this.callPrimitiveCallbackCurrent(currentObject, EventType.DRAW, markPosition)
                     }
-                    moveTimeout = null;
-                }, this._moveTime)
-            }
+                } else {
+                    let lastObject = mouseMoveObject;
+                    // console.log([ lastObject, mouseMoveObject, markPosition])
+                    let currentMouseMoveObject = this.callPrimitiveCallback(EventType.MOUSE_MOVE, markPosition);
+                    // console.log([currentMouseMoveObject, lastObject, mouseMoveObject, markPosition])
+                    if (currentMouseMoveObject !== lastObject) {
+                        mouseMoveObject = currentMouseMoveObject;
+                        lastObject && this.callPrimitiveCallbackCurrent(lastObject, EventType.MOUSE_MOVE_OUT, markPosition)
+                    }
+                }
+                moveTimeout = null;
+                // }, this._moveTime)
+                // }
+            }, this._moveTime)();
+
         }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
 
         handler.setInputAction((movement) => {
+            if (!this._enable) return;
+
             if (pressFlag) {
                 pressFlag = false;
                 currentObject && this.callPrimitiveCallbackCurrent(currentObject, EventType.DRAW_END, movement.position);
@@ -125,6 +152,8 @@ class EventSystem {
         }, Cesium.ScreenSpaceEventType.LEFT_UP);
 
         handler.setInputAction((movement) => {
+            if (!this._enable) return;
+
             pressFlag = true;
             currentObject = this.callPrimitiveCallback(EventType.LEFT_DOWN, movement.position);
             // if (currentObject && (currentObject[EventType.DRAW] || currentObject[EventType.DRAW_START] || currentObject[EventType.DRAW_END])) {
@@ -133,7 +162,8 @@ class EventSystem {
     }
 
     callPrimitiveCallback(eventName, position) {
-        let pickedObject = this.viewer.scene.pick(position, this._accuracy, this._accuracy);
+        // let pickedObject = this.viewer.scene.pick(position, this._accuracy, this._accuracy);
+        let pickedObject = Scenes.pick(this.viewer.scene,position, this._accuracy, this._accuracy);
         //entity
         if (pickedObject && typeContaines(pickedObject.id, "Entity")) {
             return this.callPrimitiveCallbackCurrent(pickedObject.id, eventName, position)
@@ -143,11 +173,11 @@ class EventSystem {
             return this.callPrimitiveCallbackCurrent(pickedObject.primitive, eventName, position)
         }
 
-        return  undefined;
+        return undefined;
     }
 
     callPrimitiveCallbackCurrent(pickedObjectObj, eventName, position) {
-        pickedObjectObj && pickedObjectObj[eventName] && pickedObjectObj[eventName](position,pickedObjectObj);
+        pickedObjectObj && pickedObjectObj[eventName] && pickedObjectObj[eventName](position, pickedObjectObj);
         return pickedObjectObj;
     }
 
@@ -182,6 +212,10 @@ class EventSystem {
 
     enableDrawRotation(enable = true) {
         this._enableRotation = enable;
+    }
+
+    enableEvent(enable = true) {
+        this._enable = enable;
     }
 
     //pass

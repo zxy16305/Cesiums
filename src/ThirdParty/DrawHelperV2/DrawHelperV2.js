@@ -25,6 +25,7 @@ import {EventSystemInstance} from "../..";
 export class DrawHelper {
     constructor(viewer) {
         this.eventSystem = EventSystemInstance.getInstance(viewer);
+        this.eventSystem.setFrameRate(60);
         this._viewer = viewer;
         this._scene = viewer.scene;
         this._tooltip = new Tooltip(viewer.container);
@@ -53,6 +54,7 @@ export class DrawHelper {
         }
         this.editCleanUp = cleanUp;
         this.muteHandlers(true);
+        this.eventSystem.enableEvent(false);
     }
 
     stopDrawing() {
@@ -62,6 +64,7 @@ export class DrawHelper {
             this.editCleanUp = null;
         }
         this.muteHandlers(false);
+        this.eventSystem.enableEvent(true);
     }
 
     muteHandlers(muted) {
