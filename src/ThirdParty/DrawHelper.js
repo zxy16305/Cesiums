@@ -1587,7 +1587,7 @@
                         var thisDragBillboard = this.dragBillboard? this.dragBillboard: dragBillboard;
                         var thisDragHalfBillboard = this.dragHalfBillboard? this.dragHalfBillboard: dragBillboard;
 
-                        var markers = new _.BillboardGroup(thisDragBillboard,thisDragHalfBillboard);
+                        var markers = new _.BillboardGroup(drawHelper,thisDragHalfBillboard);
 
                         function onEdited() {
                             extent.executeListeners({name: 'onEdited', extent: extent.extent});

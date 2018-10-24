@@ -4,6 +4,7 @@ import {copyOptions} from "../util/util";
 import {defaultSurfaceOptions, dragBillboard,ellipsoid} from "../constant/DefaultValue";
 import {enhanceWithListeners} from "../util/EventHelper";
 import {EventSystemInstance} from "../../..";
+import {BillboardGroup} from "./BillboardGroup";
 
 
 export class CirclePrimitive extends ChangeablePrimitive {
@@ -66,9 +67,6 @@ export class CirclePrimitive extends ChangeablePrimitive {
     }
 
     setEditMode(editMode = true) {
-        if (this.setEditMode) {
-            return;
-        }
         var drawHelper = this._drawHelper;
         var circle = this;
         var scene = drawHelper._scene;
@@ -85,72 +83,59 @@ export class CirclePrimitive extends ChangeablePrimitive {
             });
         }
 
-        circle.asynchronous = false;
-
-        drawHelper.registerEditableShape(circle);
-
-        circle.setEditMode = function (editMode) {
-            // if no change
-            if (this._editMode == editMode) {
-                return;
-            }
-            drawHelper.disableAllHighlights();
-            // display markers
-            if (editMode) {
-                // make sure all other shapes are not in edit mode before starting the editing of this shape
-                drawHelper.setEdited(this);
-                var _self = this;
-                // create the markers and handlers for the editing
-                if (this._markers == null) {
-                    var thisDragBillboard = this.dragBillboard ? this.dragBillboard : dragBillboard;
-
-                    var markers = new _.BillboardGroup(drawHelper, thisDragBillboard);
-
-                    var handleMarkerChanges = {
-                        dragHandlers: {
-                            onDrag: function (index, position) {
-                                circle.setRadius(Cesium.Cartesian3.distance(circle.getCenter(), position));
-                                markers.updateBillboardsPositions(getMarkerPositions());
-                            },
-                            onDragEnd: function (index, position) {
-                                onEdited();
-                            }
-                        },
-                        tooltip: function () {
-                            return "Drag to change the radius";
-                        }
-                    };
-                    markers.addBillboards(getMarkerPositions(), handleMarkerChanges);
-                    this._markers = markers;
-                    // add a handler for clicking in the globe
-                    this._globeClickhandler = new Cesium.ScreenSpaceEventHandler(scene.canvas);
-                    this._globeClickhandler.setInputAction(
-                        function (movement) {
-                            var pickedObject = scene.pick(movement.position);
-                            if (!(pickedObject && pickedObject.primitive)) {
-                                _self.setEditMode(false);
-                            }
-                        }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
-
-                    // set on top of the polygon
-                    markers.setOnTop();
-                }
-                this._editMode = true;
-            } else {
-                if (this._markers != null) {
-                    this._markers.remove();
-                    this._markers = null;
-                    this._globeClickhandler.destroy();
-                }
-                this._editMode = false;
-            }
+        if (this._editMode == editMode) {
+            return;
         }
 
-        circle.setHighlighted = setHighlighted;
+        drawHelper.disableAllHighlights();
+        // display markers
+        if (editMode) {
+            // make sure all other shapes are not in edit mode before starting the editing of this shape
+            drawHelper.setEdited(this);
+            var _self = this;
+            // create the markers and handlers for the editing
+            if (this._markers == null) {
+                var thisDragBillboard = this.dragBillboard ? this.dragBillboard : dragBillboard;
 
-        enhanceWithListeners(circle);
+                var markers = new BillboardGroup(drawHelper, thisDragBillboard);
 
-        circle.setEditMode(false);
+                var handleMarkerChanges = {
+                    dragHandlers: {
+                        onDrag: function (index, position) {
+                            circle.setRadius(Cesium.Cartesian3.distance(circle.getCenter(), position));
+                            markers.updateBillboardsPositions(getMarkerPositions());
+                        },
+                        onDragEnd: function (index, position) {
+                            onEdited();
+                        }
+                    },
+                    tooltip: function () {
+                        return "Drag to change the radius";
+                    }
+                };
+                markers.addBillboards(getMarkerPositions(), handleMarkerChanges);
+                this._markers = markers;
+                // add a handler for clicking in the globe
+                this._globeClickhandler = new Cesium.ScreenSpaceEventHandler(scene.canvas);
+                this._globeClickhandler.setInputAction((movement) =>{
+                        var pickedObject = scene.pick(movement.position);
+                        if (!(pickedObject && pickedObject.primitive)) {
+                            _self.setEditMode(false);
+                        }
+                    }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
+
+                // set on top of the polygon
+                markers.setOnTop();
+            }
+            this._editMode = true;
+        } else {
+            if (this._markers != null) {
+                this._markers.remove();
+                this._markers = null;
+                this._globeClickhandler.destroy();
+            }
+            this._editMode = false;
+        }
     }
 
     getCircleCartesianCoordinates(granularity) {

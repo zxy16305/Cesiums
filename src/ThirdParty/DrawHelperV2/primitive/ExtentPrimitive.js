@@ -22,7 +22,6 @@ export class ExtentPrimitive extends ChangeablePrimitive {
         this.setExtent(options.extent);
         drawHelper.registerEditableShape(this);
         enhanceWithListeners(this);
-
     }
 
     setExtent(extent) {
@@ -74,7 +73,7 @@ export class ExtentPrimitive extends ChangeablePrimitive {
                 var thisDragBillboard = this.dragBillboard? this.dragBillboard: dragBillboard;
                 var thisDragHalfBillboard = this.dragHalfBillboard? this.dragHalfBillboard: dragBillboard;
 
-                var markers = new BillboardGroup(thisDragBillboard,thisDragHalfBillboard);
+                var markers = new BillboardGroup(drawHelper,thisDragHalfBillboard);
 
                 var handleMarkerChanges = {
                     dragHandlers: {
