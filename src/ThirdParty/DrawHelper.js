@@ -767,6 +767,7 @@
                         // find index
                         for (var i = 0, I = _self._orderedBillboards.length; i < I && _self._orderedBillboards[i] != billboard; ++i) ;
                         callbacks.dragHandlers.onDrag && callbacks.dragHandlers.onDrag(getIndex(), position);
+                        console.log("drag")
                     }
 
                     function onDragEnd(position) {

@@ -3,6 +3,10 @@ import {dragBillboard,ellipsoid} from "../constant/DefaultValue";
 import {BillboardGroup} from "./BillboardGroup";
 
 export class PolySharpPrimitive extends ChangeablePrimitive{
+    constructor() {
+        super();
+    }
+
     setEditMode(editMode = true){
         var drawHelper = this._drawHelper;
         // if no change

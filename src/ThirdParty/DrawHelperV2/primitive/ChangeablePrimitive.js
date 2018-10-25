@@ -3,6 +3,10 @@ import {fillOptions} from "../util/util"
 
 
 export class ChangeablePrimitive {
+
+    constructor() {
+    }
+
     initialiseOptions(options) {
         fillOptions(this, options)
         this._ellipsoid = undefined;

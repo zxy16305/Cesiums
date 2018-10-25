@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>DrawHelper - a shape editor plugin for Cesium</title>
-    <script src="../lib/RCesium-1.50-build/Cesium.js" type="application/javascript"></script>
-    <!--<script src="../src/ThirdParty/DrawHelper.js" type="application/javascript"></script>-->
-    <script src="../dist/Cesiums.js" type="application/javascript"></script>
+    <script src="../lib/RCesium-1.50-build/Cesium.js"></script>
+    <script src="../src/ThirdParty/DrawHelper.js"></script>
     <style>
         @import url(../lib/RCesium-1.50-build/Widgets/widgets.css);
         @import url(../src/ThirdParty/DrawHelper.css);
@@ -58,9 +57,10 @@
         // create the almighty cesium widget
         var cesiumWidget = new Cesium.Viewer('cesiumContainer');
         window.viewer = cesiumWidget;
+
         var scene = cesiumWidget.scene;
         // start the draw helper to enable shape creation and editing
-        var drawHelper = new Cesiums.DrawHelperV2(cesiumWidget);
+        var drawHelper = new DrawHelper(cesiumWidget);
         var toolbar = drawHelper.addToolbar(document.getElementById("toolbar"), {
             buttons: ['marker', 'polyline', 'polygon', 'circle', 'extent']
         });
@@ -84,7 +84,7 @@
         });
         toolbar.addListener('polylineCreated', function(event) {
             loggingMessage('Polyline created with ' + event.positions.length + ' points');
-            var polyline = drawHelper.createEditablePolylinePrimitive({
+            var polyline = new DrawHelper.PolylinePrimitive({
                 positions: event.positions,
                 width: 5,
                 geodesic: true
@@ -97,20 +97,19 @@
         });
         toolbar.addListener('polygonCreated', function(event) {
             loggingMessage('Polygon created with ' + event.positions.length + ' points');
-            var polygon = drawHelper.createEditablePolygonPrimitive({
+            var polygon = new DrawHelper.PolygonPrimitive({
                 positions: event.positions,
                 material : Cesium.Material.fromType('Checkerboard')
             });
             scene.primitives.add(polygon);
             polygon.setEditable();
-            polygon.setEditMode(true);
             polygon.addListener('onEdited', function(event) {
                 loggingMessage('Polygon edited, ' + event.positions.length + ' points');
             });
         });
         toolbar.addListener('circleCreated', function(event) {
             loggingMessage('Circle created: center is ' + event.center.toString() + ' and radius is ' + event.radius.toFixed(1) + ' meters');
-            var circle = drawHelper.createEditableCirclePrimitive({
+            var circle = new DrawHelper.CirclePrimitive({
                 center: event.center,
                 radius: event.radius,
                 material: Cesium.Material.fromType(Cesium.Material.RimLightingType)
@@ -124,7 +123,7 @@
         toolbar.addListener('extentCreated', function(event) {
             var extent = event.extent;
             loggingMessage('Extent created (N: ' + extent.north.toFixed(3) + ', E: ' + extent.east.toFixed(3) + ', S: ' + extent.south.toFixed(3) + ', W: ' + extent.west.toFixed(3) + ')');
-            var extentPrimitive = drawHelper.createEditableExtentPrimitive({
+            var extentPrimitive = new DrawHelper.ExtentPrimitive({
                 extent: extent,
                 material: Cesium.Material.fromType(Cesium.Material.StripeType)
             });

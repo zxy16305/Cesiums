@@ -17,7 +17,7 @@ module.exports = {
             new UglifyJsPlugin({
                 cache: true,
                 parallel: true,
-                sourceMap: true ,// set to true if you want JS source maps
+                // sourceMap: true ,// set to true if you want JS source maps
                 uglifyOptions:{
                     keep_fnames: true
                 }
@@ -39,7 +39,7 @@ module.exports = {
         // `library` 声明全局变量
         library: '[name]'
     },
-    devtool: 'source-map',//生产环境源码分离
+    // devtool: 'source-map',//生产环境源码分离
     module: {
         rules: [
             {

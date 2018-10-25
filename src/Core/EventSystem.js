@@ -77,6 +77,37 @@ class EventSystem {
             };
         };
 
+        let moveCunt = 0;
+        const f = (currentMouseMoveObject,markPosition)=>{
+            if (currentMouseMoveObject !== mouseMoveObject) {
+                mouseMoveObject = currentMouseMoveObject;
+                mouseMoveObject && this.callPrimitiveCallbackCurrent(mouseMoveObject, EventType.MOUSE_MOVE_OUT, markPosition)
+            }
+        };
+
+        const mouseMove = (movementStep) => {
+            let markPosition = {
+                x: movementStep.endPosition.x,
+                y: movementStep.endPosition.y
+            };
+            if (pressFlag) {
+                //第一次按下
+                if (firstFlag) {
+                    firstFlag = false;
+                    this.callPrimitiveCallbackCurrent(currentObject, EventType.DRAW_START, markPosition)
+                    if (currentObject && !this._enableRotation) {
+                        Settings.enableRotation(this.viewer, false);
+                    }
+                } else {
+                    this.callPrimitiveCallbackCurrent(currentObject, EventType.DRAW, markPosition)
+                }
+            } else {
+                let currentMouseMoveObject = this.callPrimitiveCallback(EventType.MOUSE_MOVE, markPosition);
+                // console.log([currentMouseMoveObject, lastObject, mouseMoveObject, markPosition])
+                lodash.throttle(f,500)(currentMouseMoveObject,markPosition)
+            }
+        };
+
         let moveCount = 0;
         let moveTimeout = null;
         let pressFlag = false;
@@ -98,41 +129,7 @@ class EventSystem {
         handler.setInputAction((movementStep) => {
             if (!this._enable) return;
 
-            lodash.throttle(() => {
-                // if (moveTimeout === null) {
-
-                let markPosition = {
-                    x: movementStep.endPosition.x,
-                    y: movementStep.endPosition.y
-                };
-                // console.log(markPosition)
-
-                // moveTimeout = setTimeout(() => {
-                if (pressFlag) {
-                    //第一次按下
-                    if (firstFlag) {
-                        firstFlag = false;
-                        this.callPrimitiveCallbackCurrent(currentObject, EventType.DRAW_START, markPosition)
-                        if (currentObject && !this._enableRotation) {
-                            Settings.enableRotation(this.viewer, false);
-                        }
-                    } else {
-                        this.callPrimitiveCallbackCurrent(currentObject, EventType.DRAW, markPosition)
-                    }
-                } else {
-                    let lastObject = mouseMoveObject;
-                    // console.log([ lastObject, mouseMoveObject, markPosition])
-                    let currentMouseMoveObject = this.callPrimitiveCallback(EventType.MOUSE_MOVE, markPosition);
-                    // console.log([currentMouseMoveObject, lastObject, mouseMoveObject, markPosition])
-                    if (currentMouseMoveObject !== lastObject) {
-                        mouseMoveObject = currentMouseMoveObject;
-                        lastObject && this.callPrimitiveCallbackCurrent(lastObject, EventType.MOUSE_MOVE_OUT, markPosition)
-                    }
-                }
-                moveTimeout = null;
-                // }, this._moveTime)
-                // }
-            }, this._moveTime)();
+            lodash.throttle(mouseMove, this._moveTime)(movementStep);
 
         }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
 
@@ -162,8 +159,8 @@ class EventSystem {
     }
 
     callPrimitiveCallback(eventName, position) {
-        // let pickedObject = this.viewer.scene.pick(position, this._accuracy, this._accuracy);
-        let pickedObject = Scenes.pick(this.viewer.scene,position, this._accuracy, this._accuracy);
+        let pickedObject = this.viewer.scene.pick(position, this._accuracy, this._accuracy);
+        // let pickedObject = Scenes.pick(this.viewer.scene,position, this._accuracy, this._accuracy);
         //entity
         if (pickedObject && typeContaines(pickedObject.id, "Entity")) {
             return this.callPrimitiveCallbackCurrent(pickedObject.id, eventName, position)
@@ -178,6 +175,7 @@ class EventSystem {
 
     callPrimitiveCallbackCurrent(pickedObjectObj, eventName, position) {
         pickedObjectObj && pickedObjectObj[eventName] && pickedObjectObj[eventName](position, pickedObjectObj);
+        console.log(eventName)//debug
         return pickedObjectObj;
     }
 
