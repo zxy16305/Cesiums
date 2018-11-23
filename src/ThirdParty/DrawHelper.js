@@ -271,6 +271,7 @@
          * @private
          */
         _.prototype.update = function (context, frameState, commandList) {
+            let date = new Date();
 
             if (!Cesium.defined(this.ellipsoid)) {
                 throw new Cesium.DeveloperError('this.ellipsoid must be defined.');
@@ -369,6 +370,7 @@
             // console.log(frameState)
             // console.log(commandList)
             this._outlinePolygon && this._outlinePolygon.update(context, frameState, commandList);
+            console.log(new Date().getTime() - date.getTime())
 
         };
 

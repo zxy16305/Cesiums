@@ -31,6 +31,7 @@ export class ChangeablePrimitive {
     }
 
     update(context, frameState, commandList){
+        let date = new Date();
         if (!Cesium.defined(this.ellipsoid)) {
             throw new Cesium.DeveloperError('this.ellipsoid must be defined.');
         }
@@ -128,6 +129,7 @@ export class ChangeablePrimitive {
         // console.log(frameState)
         // console.log(commandList)
         this._outlinePolygon && this._outlinePolygon.update(context, frameState, commandList);
+        console.log(new Date().getTime() - date.getTime())
     }
 
     isDestroyed(){
