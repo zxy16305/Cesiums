@@ -25,6 +25,7 @@ export const OfficialUtils = officialUtils;
 /**Widgets**/
 export {Settings} from  "./Widgets/Settings";
 export {cesium1_50Patch} from  "./Widgets/Patchs";
+export {CompassElementBuilder} from "./Widgets/Compass"
 
 
 /*ThirdParty*/

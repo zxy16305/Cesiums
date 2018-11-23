@@ -188,5 +188,23 @@ function next() {
 
     editableEntity.setEditable()
 
+
+     let compassCallback = new Cesiums.CompassElementBuilder()
+         .setCamera(viewer.camera)
+         .setImageUrl("./images/compress.jpg")
+         .setClassName("test")
+         .is3DMode(false)
+         .build();
+    document.body.appendChild(compassCallback.compass.element)
+
+     let compassCallback2 = new Cesiums.CompassElementBuilder()
+         .setCamera(viewer.camera)
+         .setImageUrl("./images/compress.jpg")
+         .setClassName("test")
+         .setPosition({x: 200,y:0})
+         .is3DMode(true)
+         .build();
+    document.body.appendChild(compassCallback2.compass.element)
+
 }
 
