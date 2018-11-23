@@ -64,6 +64,7 @@ export class Cameras {
                      pitch = 0,
                      range = 50,
                  } = {},
+                 duration = undefined,
                  complete = () => {
                  },
                  cancel = () => {
@@ -88,8 +89,9 @@ export class Cameras {
             orientation: {
                 heading: heading,
                 pitch: pitch,
-                roll: 0.0
+                roll: 0.0,
             },
+            duration: duration,
             complete: complete,
             cancel: cancel
         });
