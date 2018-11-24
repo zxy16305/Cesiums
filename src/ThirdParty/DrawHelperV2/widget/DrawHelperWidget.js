@@ -1,4 +1,4 @@
-import * as Cesium from "Cesium";
+// import * as Cesium from "Cesium";
 import {createIconDiv} from "../util/constructHelper"
 import {
     defaultPolygonOptions,

@@ -1,4 +1,4 @@
-import * as Cesium from "Cesium";
+// import * as Cesium from "Cesium";
 import {ChangeablePrimitive} from "./ChangeablePrimitive";
 import {copyOptions} from "../util/util";
 import {defaultEllipseOptions,ellipsoid} from "../constant/DefaultValue";

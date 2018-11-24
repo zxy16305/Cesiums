@@ -5,7 +5,7 @@
    else {
        root.ChoiceHelper = factory(root.Cesium, root.DrawHelper);
    }*/
-import * as Cesium from "Cesium";
+// import * as Cesium from "Cesium";
 import {DrawHelper} from "../index"
 
 // export const ChoiceHelper =  factory(Cesium,DrawHelper);

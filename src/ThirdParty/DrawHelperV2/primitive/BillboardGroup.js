@@ -1,4 +1,4 @@
-import * as Cesium from "Cesium";
+// import * as Cesium from "Cesium";
 import {copyOptions} from "../util/util";
 import {defaultBillboard, ellipsoid} from "../constant/DefaultValue";
 import {setListener} from "../util/EventHelper";

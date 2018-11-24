@@ -1,5 +1,5 @@
 import {ChangeablePrimitive} from "./ChangeablePrimitive";
-import * as Cesium from "Cesium";
+// import * as Cesium from "Cesium";
 import {copyOptions} from "../util/util";
 import {defaultSurfaceOptions, dragBillboard,ellipsoid} from "../constant/DefaultValue";
 import {getExtent, getExtentCorners} from "../util/constructHelper";

@@ -1,4 +1,4 @@
-import * as Cesium from "Cesium";
+// import * as Cesium from "Cesium";
 import {Cartesian3s, EventSystemInstance, EventType} from "..";
 import {BaseEntity} from "./BaseEntity";
 

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="../lib/requirejs/require.js"></script>
+    <script>
+        requirejs.config({
+            baseUrl: '/Cesiums',
+            paths: {
+                "Cesium":"lib/RCesium-1.50-build/Cesium",
+                "Cesiums":"dist/Cesiums"
+            },
+            shim: {
+                "Cesiums":['Cesium']
+            }
+        });
+    </script>
+    <script>
+        require(["Cesiums"],function (Cesiums) {
+            console.log(Cesiums);
+        })
+    </script>
+</head>
+<body>
+
+</body>
+</html>

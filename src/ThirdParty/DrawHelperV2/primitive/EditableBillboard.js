@@ -1,4 +1,4 @@
-import * as Cesium from "Cesium";
+// import * as Cesium from "Cesium";
 import {EventSystemInstance} from "../../..";
 
 export class EditableBillboard extends Cesium.Billboard {

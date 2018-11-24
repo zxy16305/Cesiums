@@ -1,7 +1,7 @@
 /**
  * 使用es6的方式 ，重新组织drawHelper
  */
-import * as Cesium from "Cesium";
+// import * as Cesium from "Cesium";
 import {BillboardGroup} from "./primitive/BillboardGroup";
 import {Tooltip} from "./widget/Tooltip";
 import {enhanceWithListeners, setListener} from "./util/EventHelper";

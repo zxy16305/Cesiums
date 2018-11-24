@@ -1,4 +1,4 @@
-import * as Cesium from "Cesium";
+// import * as Cesium from "Cesium";
 import {defined} from "../Util/NormalUtils"
 import {typeContaines} from "../Util/TypeUtils"
 import {setListener} from "../ThirdParty/DrawHelperV2/util/EventHelper";

@@ -1,4 +1,4 @@
-import * as Cesium from "Cesium";
+// import * as Cesium from "Cesium";
 
 /**
  * cesium 1.50 ， 加载模型时报错的问题

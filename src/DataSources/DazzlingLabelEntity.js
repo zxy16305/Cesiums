@@ -1,4 +1,4 @@
-import * as Cesium from "Cesium";
+// import * as Cesium from "Cesium";
 import {Cartesian3s} from "../Core/Cartesian3s";
 import {SimpleCosBuilder} from "../Util/Math"
 import {BaseEntity} from "./BaseEntity";

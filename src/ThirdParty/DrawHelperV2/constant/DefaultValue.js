@@ -1,4 +1,4 @@
-import * as Cesium from "Cesium";
+// import * as Cesium from "Cesium";
 import {copyOptions} from "../util/util"
 
 export const ellipsoid = Cesium.Ellipsoid.WGS84;

@@ -1,4 +1,4 @@
-import * as Cesium from "Cesium";
+// import * as Cesium from "Cesium";
 import {ellipsoid} from '../constant/DefaultValue'
 
 export const getExtent = (mn, mx) => {
