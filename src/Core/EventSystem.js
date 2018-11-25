@@ -6,8 +6,27 @@ import {Settings} from "../Widgets/Settings"
 import {Uuid} from "../Util/Uuid"
 import * as lodash from "../ThirdParty/lodash.min"
 import {Scenes} from "../Scene/Scenes";
+import {debugManager} from "../index";
 
 let consumeMoveOutFlag = true;
+
+const pickthrottle = {
+    lastPick: null,
+    lastTime: new Date(),
+    pick: function (scene, position, accuracy) {
+        let time = new Date();
+        if (this.lastPick === null || time.getTime() - this.lastTime.getTime() > 100) {
+            this.lastTime = time;
+            this.lastPick = scene.pick(position, accuracy, accuracy);
+            debugManager.log("new")
+        }else{
+            debugManager.log("old")
+        }
+        // if(defined(this.lastPick))
+        return lodash.merge({}, this.lastPick);;
+    }
+}
+
 
 /**
  * 接管Cesium的事件系统（对于entity和primitive）
@@ -78,7 +97,7 @@ class EventSystem {
         };
 
         let moveCunt = 0;
-        const f = (currentMouseMoveObject,markPosition)=>{
+        const f = (currentMouseMoveObject, markPosition) => {
             if (currentMouseMoveObject !== mouseMoveObject) {
                 mouseMoveObject = currentMouseMoveObject;
                 mouseMoveObject && this.callPrimitiveCallbackCurrent(mouseMoveObject, EventType.MOUSE_MOVE_OUT, markPosition)
@@ -86,6 +105,7 @@ class EventSystem {
         };
 
         const mouseMove = (movementStep) => {
+
             let markPosition = {
                 x: movementStep.endPosition.x,
                 y: movementStep.endPosition.y
@@ -103,8 +123,15 @@ class EventSystem {
                 }
             } else {
                 let currentMouseMoveObject = this.callPrimitiveCallback(EventType.MOUSE_MOVE, markPosition);
-                // console.log([currentMouseMoveObject, lastObject, mouseMoveObject, markPosition])
-                lodash.throttle(f,500)(currentMouseMoveObject,markPosition)
+                debugManager.log([currentMouseMoveObject, mouseMoveObject, markPosition])
+                // if (!(currentMouseMoveObject === undefined && mouseMoveObject === undefined)
+                //     && (currentMouseMoveObject === undefined || mouseMoveObject === undefined )
+                //     && currentMouseMoveObject.id !== mouseMoveObject.id) {
+                if (currentMouseMoveObject !== mouseMoveObject) {
+
+                    mouseMoveObject && this.callPrimitiveCallbackCurrent(mouseMoveObject, EventType.MOUSE_MOVE_OUT, markPosition)
+                    mouseMoveObject = currentMouseMoveObject;
+                }
             }
         };
 
@@ -129,7 +156,8 @@ class EventSystem {
         handler.setInputAction((movementStep) => {
             if (!this._enable) return;
 
-            lodash.throttle(mouseMove, this._moveTime)(movementStep);
+            // lodash.throttle(mouseMove, this._moveTime)(movementStep);
+            mouseMove(movementStep)
 
         }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
 
@@ -159,7 +187,9 @@ class EventSystem {
     }
 
     callPrimitiveCallback(eventName, position) {
-        let pickedObject = this.viewer.scene.pick(position, this._accuracy, this._accuracy);
+        //在取点做了节流 目前是100毫秒内都会返回同一个对象
+        // let pickedObject = this.viewer.scene.pick(position, this._accuracy, this._accuracy);
+        let pickedObject = pickthrottle.pick(this.viewer.scene, position, this._accuracy, this._accuracy);
         // let pickedObject = Scenes.pick(this.viewer.scene,position, this._accuracy, this._accuracy);
         //entity
         if (pickedObject && typeContaines(pickedObject.id, "Entity")) {
@@ -175,7 +205,7 @@ class EventSystem {
 
     callPrimitiveCallbackCurrent(pickedObjectObj, eventName, position) {
         pickedObjectObj && pickedObjectObj[eventName] && pickedObjectObj[eventName](position, pickedObjectObj);
-        console.log(eventName)//debug
+        debugManager.log(eventName)//debug
         return pickedObjectObj;
     }
 

@@ -370,7 +370,7 @@
             // console.log(frameState)
             // console.log(commandList)
             this._outlinePolygon && this._outlinePolygon.update(context, frameState, commandList);
-            console.log(new Date().getTime() - date.getTime())
+            // console.log(new Date().getTime() - date.getTime())
 
         };
 

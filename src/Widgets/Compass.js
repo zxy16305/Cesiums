@@ -1,3 +1,5 @@
+import {debugManager} from "../index";
+
 export class CompassElementBuilder {
     constructor() {
         this.time = 100;
@@ -54,7 +56,11 @@ export class CompassElementBuilder {
                 // console.log(beta);
                 if (beta > 45) beta = 45;
                 if (gamma > 45) gamma = 45;
-                console.log(gamma);
+                debugManager.log({
+                    gamma,
+                    beta,
+                    alpha
+                });
                 compass.element.style.webkitTransform = `rotateX(${beta}deg) rotateY(${gamma}deg) rotateZ(${alpha}deg)`;
                 compass.element.style.transform = `rotateX(${beta}deg) rotateY(${gamma}deg) rotateZ(${alpha}deg)`;
                 compass.element.style.mozTransform = `rotateX(${beta}deg) rotateY(${gamma}deg) rotateZ(${alpha}deg)`;

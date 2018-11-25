@@ -17,6 +17,7 @@
     var scene = viewer.scene;
 
     let instance = Cesiums.EventSystemInstance.getInstance(viewer);
+    Cesiums.debugManager.debug = true;
     window.viewer = viewer;
 
     // 地图底图
@@ -333,7 +334,10 @@
             .setOnClick(function (position, primitive) {
                 console.log([position,primitive])
             })
-            .setColor(Cesium.Color.TEAL.withAlpha(0))
+            .setColor(Cesium.Color.TEAL.withAlpha(0.2))
+            .setHoverColor(Cesium.Color.TEAL.withAlpha(0.5))
+            .setBottomHeight(-200)//底边绝对高度
+            .setHeight(400) //总高度
             .build()
         scene.primitives.add(primivtive)
 

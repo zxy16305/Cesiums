@@ -1,9 +1,14 @@
 // import * as Cesium from "Cesium";
-import {EventSystemInstance} from "..";
+import {debugManager, EventSystemInstance} from "..";
 import {defined} from "../Util/NormalUtils";
 
 
 export class BuildingHightlightBuilder {
+
+    constructor() {
+        this._height = 100;
+        this._bottomHeight = -50;
+    }
 
     setPositions(positions) {
         this._position = positions;
@@ -30,6 +35,16 @@ export class BuildingHightlightBuilder {
         return this;
     }
 
+    setBottomHeight(height= -50){
+        this._bottomHeight =height;
+        return this;
+    }
+
+    setHeight(height = 100){
+        this._height = height;
+        return this;
+    }
+
     _setDefault() {
         if (!defined(this._hoverColor)) {
             this._hoverColor = Cesium.Color.YELLOW.withAlpha(0.5);
@@ -50,8 +65,8 @@ export class BuildingHightlightBuilder {
                 geometry: Cesium.PolygonGeometry.fromPositions({
                     vertexFormat: Cesium.PerInstanceColorAppearance.VERTEX_FORMAT,
                     positions: this._position,
-                    extrudedHeight: 100,
-                    height: -50,
+                    extrudedHeight: this._height,
+                    height: this._bottomHeight,
                     closeBottom: true
                 }),
                 attributes: {
@@ -62,15 +77,15 @@ export class BuildingHightlightBuilder {
             }),
             classificationType: Cesium.ClassificationType.BOTH//CESIUM_3D_TILE
         });
-        eventSystem.onMouseMove(classificationPrimitive, (position,obj) => {
-            if(!obj) return;//暂时过滤掉drawhelper的事件
-            console.log(["move in",position,obj])
+        eventSystem.onMouseMove(classificationPrimitive, (position, obj) => {
+            if (!obj) return;//暂时过滤掉drawhelper的事件
+            debugManager.log(["move in", position, obj])
             let attributes = classificationPrimitive.getGeometryInstanceAttributes('box-2');
             attributes.color = this._hoverColorBytes;
         })
 
-        eventSystem.onMouseMoveOut(classificationPrimitive, (position,obj) => {
-            console.log(["move out",position,obj])
+        eventSystem.onMouseMoveOut(classificationPrimitive, (position, obj) => {
+            // console.log(["move out", position, obj])
             let attributes = classificationPrimitive.getGeometryInstanceAttributes('box-2');
             attributes.color = this._colorBytes;
         })

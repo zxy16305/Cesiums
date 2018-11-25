@@ -38,7 +38,20 @@ export {ChoiceHelper} from "./ThirdParty/ChoiceHelper"
 
 import "./ThirdParty/DrawHelper.css"
 
-
+export const debugManager = {
+    _debug : false,
+    set debug(enable){
+        this._debug = enable
+    },
+    get debug(){
+        return this._debug;
+    },
+    log: function (message) {
+        if(this._debug){
+            console.log(message)
+        }
+    }
+}
 
 //遍历script 获取src路径
 function getPathDir() {

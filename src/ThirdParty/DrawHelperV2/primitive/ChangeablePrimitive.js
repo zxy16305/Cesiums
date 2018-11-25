@@ -1,5 +1,6 @@
 import * as Cesium from "Cesium";
 import {fillOptions} from "../util/util"
+import {debugManager} from "../../../index";
 
 
 export class ChangeablePrimitive {
@@ -64,6 +65,7 @@ export class ChangeablePrimitive {
             if (!geometry) {
                 return;
             }
+            debugManager.log("in update")
 
             this._createPrimitive = false;
             this._ellipsoid = this.ellipsoid;
@@ -129,7 +131,7 @@ export class ChangeablePrimitive {
         // console.log(frameState)
         // console.log(commandList)
         this._outlinePolygon && this._outlinePolygon.update(context, frameState, commandList);
-        console.log(new Date().getTime() - date.getTime())
+        debugManager.log(new Date().getTime() - date.getTime())
     }
 
     isDestroyed(){
