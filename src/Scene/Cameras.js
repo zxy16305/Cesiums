@@ -124,8 +124,9 @@ export class Cameras {
      * @param camera
      * @param data
      * @param isFly
+     * @param errorCallback
      */
-    static loadCameraStatus(camera, data, isFly = false, errorCallback) {
+    static loadCameraStatus(camera, data, isFly = false, errorCallback = ()=>{ }) {
         try {
             let dataCompress = decodeURIComponent(data).split(",");
 

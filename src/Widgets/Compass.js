@@ -1,5 +1,19 @@
 import {debugManager} from "../index";
+import {defined} from "../Util/NormalUtils";
 
+/**
+ * 生成一个随着摄像头旋转的dom元素，默认使用有background的div实现，也可以自定义class样式
+ *
+ * @example
+ *      let compassCallback = new Cesiums.CompassElementBuilder()
+ *          .setCamera(viewer.camera)
+ *          .setImageUrl("./images/compress.jpg")//相对于当前html的路径
+ *          .setClassName("test")//自定义指南针样式
+ *          .is3DMode(false)//3dmode下，pitch和roll也会旋转
+ *          .build();
+ *      document.body.appendChild(compassCallback.compass.element)
+ *
+ */
 export class CompassElementBuilder {
     constructor() {
         this.time = 100;
@@ -9,21 +23,41 @@ export class CompassElementBuilder {
         this.mode3d = true;
     }
 
+    /**
+     *
+     * @param {string} url - 图片相对于html的相对路径，也可以不设置这个，在  {@link CompassElementBuilder#setClassName} 里直接设置class
+     * @returns {CompassElementBuilder}
+     */
     setImageUrl(url) {
         this.imageUrl = url;
         return this;
     }
 
+    /**
+     *
+     * @param {Cesium.Camera} camera
+     * @returns {CompassElementBuilder}
+     */
     setCamera(camera) {
         this.camera = camera;
         return this;
     }
 
+    /**
+     *
+     * @param {string} className
+     * @returns {CompassElementBuilder}
+     */
     setClassName(className) {
         this.className = className;
         return this;
     }
 
+    /**
+     *
+     * @param {{x: number,y:number}} param - 左上角坐标
+     * @returns {CompassElementBuilder}
+     */
     setPosition({x = 0, y = 0}) {
         this.position = {
             x, y
@@ -31,16 +65,30 @@ export class CompassElementBuilder {
         return this;
     }
 
+    /**
+     * 设定指南针刷新时间
+     * @param {number} time
+     * @returns {CompassElementBuilder}
+     */
     setUpdateTime(time = 100) {
         this.time = time;
         return this;
     }
 
+    /**
+     * 设定指南针模式，2d模式下只会平面旋转
+     * @param {boolean} mode3d
+     * @returns {CompassElementBuilder}
+     */
     is3DMode(mode3d = true) {
         this.mode3d = mode3d;
         return this;
     }
 
+    /**
+     *
+     * @returns {{destory: function, compass: Compass}} - 返回对象
+     */
     build() {
         let compass = new Compass(this.imageUrl);
         compass.element.style.left = this.position.x + "px";
@@ -90,12 +138,16 @@ export class CompassElementBuilder {
     }
 }
 
-
+/**
+ * 直接创建意义不大，使用 {@link CompassElementBuilder} 构造
+ */
 export class Compass {
     constructor(imageUrl) {
         let element = document.createElement("div");
-        element.style.background = `url("${imageUrl}") no-repeat center`
-        element.style.backgroundSize = `100px 100px `
+        if(defined(imageUrl)){
+            element.style.background = `url("${imageUrl}") no-repeat center`
+            element.style.backgroundSize = `100px 100px `
+        }
         element.style.position = "absolute";
         element.style.width = "100px";
         element.style.height = "100px";

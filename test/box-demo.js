@@ -17,7 +17,7 @@
     var scene = viewer.scene;
 
     let instance = Cesiums.EventSystemInstance.getInstance(viewer);
-    Cesiums.debugManager.debug = true;
+    // Cesiums.debugManager.debug = true;
     window.viewer = viewer;
 
     // 地图底图
@@ -60,14 +60,14 @@
     // viewer.terrainProvider = vrTheWorldProvider;
 
     // 模型的中心点坐标
-    var longitude = 118.92363523296339;
-    var latitude = 32.11622044873156;
+    var longitude = 120.1267;
+    var latitude = 30.85776;
     // 高度校准（需手动调节）
-    var height = -20;//2.5076627764545864e-9;
+    var height = -12;//2.5076627764545864e-9;
     var heading = 0;
     // 加载 3d-tiles 模型资源到场景中
     var tileset = new Cesium.Cesium3DTileset({
-        url: 'http://localhost:9002/api/folder/a2a84b6f45214ab2b9018ca4842208a1/tileset.json'
+        url: 'http://192.168.100.233:9002/api/folder/d323b55c37894e3da8d0508eadf93c42/tileset.json'
     });
     viewer.scene.primitives.add(tileset);
     tileset.readyPromise.then(function(argument) {

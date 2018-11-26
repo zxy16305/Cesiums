@@ -9,18 +9,18 @@ import {Scenes} from "../Scene/Scenes";
 import {debugManager} from "../index";
 
 let consumeMoveOutFlag = true;
-
+let pickTimeout = 100;
 const pickthrottle = {
     lastPick: null,
     lastTime: new Date(),
     pick: function (scene, position, accuracy) {
         let time = new Date();
-        if (this.lastPick === null || time.getTime() - this.lastTime.getTime() > 100) {
+        if (this.lastPick === null || time.getTime() - this.lastTime.getTime() > pickTimeout) {
             this.lastTime = time;
             this.lastPick = scene.pick(position, accuracy, accuracy);
-            debugManager.log("new")
+            // debugManager.log("new")
         }else{
-            debugManager.log("old")
+            // debugManager.log("old")
         }
         // if(defined(this.lastPick))
         return lodash.merge({}, this.lastPick);;
@@ -135,13 +135,12 @@ class EventSystem {
             }
         };
 
-        let moveCount = 0;
-        let moveTimeout = null;
         let pressFlag = false;
         let currentObject = null;
         let firstFlag = true;
         let mouseMoveObject = null;
         let handler = new Cesium.ScreenSpaceEventHandler(this.viewer.scene.canvas);
+        let moveStopTimeout = null;
 
         handler.setInputAction((movement) => {
             if (!this._enable) return;
@@ -158,6 +157,12 @@ class EventSystem {
 
             // lodash.throttle(mouseMove, this._moveTime)(movementStep);
             mouseMove(movementStep)
+            //鼠标静止不动时再触发一次
+            if(defined(moveStopTimeout)) clearTimeout(moveStopTimeout);
+            moveStopTimeout = setTimeout(()=>{
+                debugManager.log("on mouse stop!")
+                mouseMove(movementStep)
+            },pickTimeout * 3)
 
         }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
 

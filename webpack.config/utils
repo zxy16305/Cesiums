@@ -1,0 +1,18 @@
+var path = require('path');
+
+
+module.exports = {
+    mkdirs(dirpath, mode, callback) {
+        fs.exists(dirpath, (exists) => {
+            if (exists) {
+                callback(dirpath);
+            } else {
+                //尝试创建父目录，然后再创建当前目录
+                mkdirs(path.dirname(dirpath), mode, () => {
+                    fs.mkdir(dirpath, mode, callback);
+                });
+            }
+        });
+    }
+
+}

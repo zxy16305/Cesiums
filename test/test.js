@@ -191,9 +191,9 @@ function next() {
 
      let compassCallback = new Cesiums.CompassElementBuilder()
          .setCamera(viewer.camera)
-         .setImageUrl("./images/compress.jpg")
-         .setClassName("test")
-         .is3DMode(false)
+         .setImageUrl("./images/compress.jpg")//相对于当前html的路径
+         .setClassName("test")//自定义指南针样式
+         .is3DMode(false)//3dmode下，pitch和roll也会旋转
          .build();
     document.body.appendChild(compassCallback.compass.element)
 

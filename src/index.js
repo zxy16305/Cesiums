@@ -48,7 +48,9 @@ export const debugManager = {
     },
     log: function (message) {
         if(this._debug){
-            console.log(message)
+            console.groupCollapsed(message)
+            console.trace(message)
+            console.groupEnd()
         }
     }
 }

@@ -2,7 +2,25 @@
 import {debugManager, EventSystemInstance} from "..";
 import {defined} from "../Util/NormalUtils";
 
-
+/**
+ * <p>需要先引入事件系统</p>
+ * @example
+ *  Cesiums.EventSystemInstance.setViewer(viewer);
+ *
+ *  @example
+ *  let primivtive = new Cesiums.BuildingHightlightBuilder()
+ *      .setPositions(positions)
+ *      .setOnClick(function (position, primitive) {
+ *          console.log([position,primitive])
+ *      })
+ *      .setColor(Cesium.Color.TEAL.withAlpha(0))
+ *      .setHoverColor(Cesium.Color.TEAL.withAlpha(0.5))
+ *      .setBottomHeight(-50)//底边绝对高度
+ *      .setHeight(100) //总高度
+ *      .build()
+ *  scene.primitives.add(primivtive)
+ *
+ */
 export class BuildingHightlightBuilder {
 
     constructor() {
