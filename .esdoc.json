@@ -1,0 +1,10 @@
+{
+  "source": "./src",
+  "destination": "./doc/esdocs",
+  "excludes":["ThirdParty"],
+  "plugins": [
+    {
+      "name": "esdoc-standard-plugin"
+    }
+  ]
+}
