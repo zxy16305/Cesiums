@@ -10,7 +10,7 @@
     "dev": "webpack --progress --watch --config ./webpack.dev.config.js",
     "product": "webpack --progress",
     "doc": "jsdoc src/Scene/Cameras.js",
-    "esdoc":"esdoc",
+    "esdoc": "esdoc",
     "patch": "yarn version --patch && node ./webpack.config/versionPackScript.js "
   },
   "devDependencies": {
