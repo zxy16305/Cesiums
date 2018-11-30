@@ -11,7 +11,7 @@
     "product": "webpack --progress",
     "doc": "jsdoc src/Scene/Cameras.js",
     "esdoc": "esdoc",
-    "patch": " yarn build && yarn version --patch && node ./webpack.config/versionPackScript.js "
+    "patch": "yarn build && yarn version --patch && node ./webpack.config/versionPackScript.js "
   },
   "devDependencies": {
     "babel-core": "^6.26.3",

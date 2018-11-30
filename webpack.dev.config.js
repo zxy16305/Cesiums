@@ -2,6 +2,8 @@ var path = require('path');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 var JsDocPlugin = require('jsdoc-webpack-plugin-v2');
+var os = require('os');
+const HappyPack = require('happypack');
 
 var config = {
     defaultPath: '/dist',
@@ -32,12 +34,13 @@ module.exports = {
             {
                 test: /\.js$/,
                 exclude: /(node_modules|bower_components)/,
-                use: {
-                    loader: 'babel-loader',
-                    options: {
-                        presets: ['es2015']
-                    }
-                }
+                // use: {
+                //     loader: 'babel-loader',
+                //     options: {
+                //         presets: ['es2015']
+                //     }
+                // }
+                use: 'happypack/loader?id=js-happy'
             }, {
                 test: /\.css$/,
                 exclude: /(node_modules|bower_components)/,
@@ -61,6 +64,17 @@ module.exports = {
         // new CopyWebpackPlugin([{
         //     from: "./resources/**",
         //     to: "./"
-        // }])
+        // }]),
+        new HappyPack({
+            id: "js-happy",
+            threads: os.cpus().length,
+            loaders: [{
+                loader: 'babel-loader',
+                options: {
+                    presets: ['es2015'],
+                    cacheDirectory: true
+                }
+            }]
+        })
     ]
 };

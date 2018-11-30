@@ -2,6 +2,9 @@ var path = require('path');
 const UglifyJsPlugin = require("uglifyjs-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
+var os = require('os');
+const HappyPack = require('happypack');
+
 
 var config = {
     defaultPath: '/dist',
@@ -45,12 +48,13 @@ module.exports = {
             {
                 test: /\.js$/,
                 exclude: /(node_modules|bower_components)/,
-                use: {
-                    loader: 'babel-loader',
-                    options: {
-                        presets: ['es2015']
-                    }
-                }
+                // use: {
+                //     loader: 'babel-loader',
+                //     options: {
+                //         presets: ['es2015']
+                //     }
+                // }
+                use: 'happypack/loader?id=js-happy'
             },{
                 test: /\.css$/,
                 exclude: /(node_modules|bower_components)/,
@@ -70,6 +74,17 @@ module.exports = {
         new MiniCssExtractPlugin({
             filename: "[name].min.css",
             chunkFilename: "[id].min.css"
+        }),
+        new HappyPack({
+            id: "js-happy",
+            threads: os.cpus().length,
+            loaders: [{
+                loader: 'babel-loader',
+                options: {
+                    presets: ['es2015'],
+                    cacheDirectory: true
+                }
+            }]
         })
     ]
 };

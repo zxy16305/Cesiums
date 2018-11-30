@@ -4,7 +4,21 @@
   "excludes":["ThirdParty"],
   "plugins": [
     {
-      "name": "esdoc-standard-plugin"
+      "name": "esdoc-standard-plugin",
+      "option": {
+        "lint": {"enable": true},
+        "coverage": {"enable": true},
+        "accessor": {"access": ["public", "protected", "package", "private"], "autoPrivate": true},
+        "undocumentIdentifier": {"enable": true},
+        "unexportedIdentifier": {"enable": false},
+        "typeInference": {"enable": true},
+        "brand": {
+          "title": "Cesiums",
+          "description": "this is util for cesiumjs",
+          "repository": "https://github.com/zxy16305/Cesiums",
+          "site": "https://github.com/zxy16305/Cesiums"
+        }
+      }
     }
   ]
 }

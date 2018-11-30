@@ -15,15 +15,15 @@
  * </pre>
  *
  */
-(function webpackUniversalModuleDefinition(root, factory) {
-    // if (typeof exports === 'object' && typeof module === 'object')
-    //     module.exports = factory(require('Cesium'));
-    // else if (typeof define === 'function' && define.amd)
-    //     define('DrawHelper', ['Cesium'], factory);
-    // else {
-        root.DrawHelper = factory(root.Cesium);
-    // }
-}(window, function (Cesium) {
+// (function webpackUniversalModuleDefinition(root, factory) {
+//     // if (typeof exports === 'object' && typeof module === 'object')
+//     //     module.exports = factory(require('Cesium'));
+//     // else if (typeof define === 'function' && define.amd)
+//     //     define('DrawHelper', ['Cesium'], factory);
+//     // else {
+//         root.DrawHelper = factory(root.Cesium);
+//     // }
+// }(window, function (Cesium) {
     // static variables
     var ellipsoid = Cesium.Ellipsoid.WGS84;
 
@@ -2195,5 +2195,6 @@
     }
 
 
-    return _;
-}));
+//     return _;
+// }));
+export {_ as DrawHelper} ;

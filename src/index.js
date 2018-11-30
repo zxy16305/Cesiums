@@ -10,6 +10,7 @@ import "./Scene/Cameras.css"
 /**Core*/
 export {Cartesian3s} from "./Core/Cartesian3s"
 export {EventSystemInstance,EventType} from "./Core/EventSystem"
+export {Debugs} from "./Core/Debugs";
 
 
 /**DataSources*/
@@ -29,8 +30,7 @@ export {CompassElementBuilder} from "./Widgets/Compass"
 
 
 /*ThirdParty*/
-import * as drawHelper from "./ThirdParty/DrawHelper";
-export const DrawHelper = drawHelper;
+export {DrawHelper} from "./ThirdParty/DrawHelper"
 
 export {DrawHelper as DrawHelperV2} from "./ThirdParty/DrawHelperV2/DrawHelperV2"
 
@@ -54,6 +54,8 @@ export const debugManager = {
         }
     }
 }
+
+
 
 //遍历script 获取src路径
 function getPathDir() {

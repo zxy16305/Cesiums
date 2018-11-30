@@ -11,7 +11,7 @@ var heading = 0;
 init();
 
 function init() {
-    Cesiums.cesium1_50Patch();
+    // Cesiums.cesium1_50Patch();
     viewer = new Cesium.Viewer(document.getElementById("map"));
     viewer.cesiumWidget.screenSpaceEventHandler.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_DOUBLE_CLICK)
     setMap();
@@ -36,7 +36,7 @@ function setMap() {
     setBaseMap('http://www.google.cn/maps/vt?lyrs=s&x={x}&y={y}&z={z}', 'Google Map', ["mt0", "mt1", "mt2", "mt3"], true);
 
     var tileset = new Cesium.Cesium3DTileset({
-        url: 'http://localhost:9002/api/folder/a2a84b6f45214ab2b9018ca4842208a1/tileset.json'
+        url: 'http://localhost:9002/api/folder/044c1e57c01d4251967cceba34331cc4/tileset.json'
     });
     viewer.scene.primitives.add(tileset);
     tileset.readyPromise.then(function (argument) {
@@ -67,7 +67,7 @@ function setMap() {
 }
 
 function next() {
-
+    Cesiums.Debugs.positionPick(viewer)
 
 
     // var longitude = 118.92363523296339;
@@ -185,8 +185,11 @@ function next() {
         }
     });
     editableEntity.setViewer(viewer)
+    editableEntity.relativeHeight = 10;
 
     editableEntity.setEditable()
+
+    // editableEntity.setEditable(false)
 
 
      let compassCallback = new Cesiums.CompassElementBuilder()
@@ -205,6 +208,32 @@ function next() {
          .is3DMode(true)
          .build();
     document.body.appendChild(compassCallback2.compass.element)
+
+    var drawHelper = new DrawHelper(viewer);
+
+    // var pos = Cesium.Cartesian3.fromDegrees(longitude + 0.015, latitude, 30);
+    // let add = viewer.entities.add({
+    //     id: 'icon-142345',
+    //     position: pos,
+    //     // 图标
+    //     billboard: {
+    //         image: 'images/icon_dl.png'
+    //     },
+    //     modeType:"billboard",
+    //     // 文字标签
+    //     label: {
+    //         pixelOffset: new Cesium.Cartesian2(0, 30),
+    //         fillColor: Cesium.Color.WHITE,
+    //         outlineColor: new Cesium.Color.fromCssColorString('#191970'),
+    //         outlineWidth: 2,
+    //         style: Cesium.LabelStyle.FILL_AND_OUTLINE,
+    //         font: '24px Helvetica',
+    //         text: '这是宿舍，还是教学楼？'
+    //     }
+    // });
+    // window.add = add;
+    // add.setEditable(true)
+
 
 }
 
