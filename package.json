@@ -1,6 +1,6 @@
 {
   "name": "cesiums",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "main": "index.js",
   "author": "zhangqw",
   "license": "MIT",
@@ -11,7 +11,7 @@
     "product": "webpack --progress",
     "doc": "jsdoc src/Scene/Cameras.js",
     "esdoc": "esdoc",
-    "patch": "yarn version --patch && node ./webpack.config/versionPackScript.js "
+    "patch": " yarn build && yarn version --patch && node ./webpack.config/versionPackScript.js "
   },
   "devDependencies": {
     "babel-core": "^6.26.3",
@@ -24,6 +24,7 @@
     "esdoc": "^1.1.0",
     "esdoc-standard-plugin": "^1.0.0",
     "fs-extra": "^7.0.1",
+    "happypack": "^5.0.0",
     "jsdoc": "^3.5.5",
     "jsdoc-webpack-plugin-v2": "^2.0.2",
     "mini-css-extract-plugin": "^0.4.4",
