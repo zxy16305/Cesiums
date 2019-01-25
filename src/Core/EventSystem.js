@@ -23,7 +23,7 @@ const pickthrottle = {
             // debugManager.log("old")
         }
         // if(defined(this.lastPick))
-        return lodash.merge({}, this.lastPick);;
+        return lodash.merge({}, this.lastPick);
     }
 }
 
@@ -294,6 +294,7 @@ export const EventType = Object.freeze({
     LEFT_DOUBLE_CLICK: "leftDoubleClick",
     MOUSE_MOVE: "mouseMove",
     MOUSE_MOVE_OUT: "mouseMoveOut",
+    MOUSE_MOVE_IN: "mouseMoveIn",
     LEFT_UP: "leftUp",
     LEFT_DOWN: "leftDown",
     DRAW_START: "drawStart",

@@ -12,6 +12,7 @@ init();
 
 function init() {
     // Cesiums.cesium1_50Patch();
+    Cesiums.debugManager.debug = true;
     viewer = new Cesium.Viewer(document.getElementById("map"));
     viewer.cesiumWidget.screenSpaceEventHandler.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_DOUBLE_CLICK)
     setMap();
@@ -36,7 +37,7 @@ function setMap() {
     setBaseMap('http://www.google.cn/maps/vt?lyrs=s&x={x}&y={y}&z={z}', 'Google Map', ["mt0", "mt1", "mt2", "mt3"], true);
 
     var tileset = new Cesium.Cesium3DTileset({
-        url: 'http://localhost:9002/api/folder/044c1e57c01d4251967cceba34331cc4/tileset.json'
+        url: 'http://192.168.100.233:9002/api/folder/044c1e57c01d4251967cceba34331cc4/tileset.json'
     });
     viewer.scene.primitives.add(tileset);
     tileset.readyPromise.then(function (argument) {
@@ -48,7 +49,7 @@ function setMap() {
 
         var boundingSphere = tileset.boundingSphere;
         var cartographic = Cesium.Cartographic.fromCartesian(boundingSphere.center);
-        var surface = Cesium.Cartesian3.fromRadians(cartographic.longitude, cartographic.latitude, cartographic.height );
+        var surface = Cesium.Cartesian3.fromRadians(cartographic.longitude, cartographic.latitude, cartographic.height);
         var translation = Cesium.Cartesian3.subtract(position, surface, new Cesium.Cartesian3());
         tileset.modelMatrix = Cesium.Matrix4.fromTranslation(translation);
         ;
@@ -67,7 +68,7 @@ function setMap() {
 }
 
 function next() {
-    Cesiums.Debugs.positionPick(viewer)
+    // Cesiums.Debugs.positionPick(viewer)
 
 
     // var longitude = 118.92363523296339;
@@ -76,10 +77,36 @@ function next() {
     // var height = -20;//2.5076627764545864e-9;
     var heading = 0;
 
-    var pos = Cesium.Cartesian3.fromDegrees(longitude, latitude, 20);
+    var pos = Cesium.Cartesian3.fromDegrees(longitude, latitude, 40);
+
+    var pos2 = Cesium.Cartesian3.fromDegrees(longitude + 0.002, latitude, 40);
 
     window.pos = pos;
-    let entity = new Cesiums.DazzlingLabelEntity({
+    // let entity = new Cesiums.DazzlingLabelEntity({
+    //     id: 'icon-12345',
+    //     position: pos,
+    //     // 图标
+    //     billboard: {
+    //         image: 'images/icon_dl.png'
+    //     },
+    //     // 文字标签
+    //     label: {
+    //         pixelOffset: new Cesium.Cartesian2(0, 30),
+    //         fillColor: Cesium.Color.WHITE,
+    //         outlineColor: new Cesium.Color.fromCssColorString('#191970'),
+    //         outlineWidth: 2,
+    //         style: Cesium.LabelStyle.FILL_AND_OUTLINE,
+    //         font: '24px Helvetica',
+    //         text: '点击环形特效'
+    //     }
+    // }, {
+    //     modelColor: Cesium.Color.RED,
+    //     ring: {
+    //         timePeriod: 5,
+    //         relativeSize: 1
+    //     }
+    // });
+    let entity = new Cesium.Entity({
         id: 'icon-12345',
         position: pos,
         // 图标
@@ -96,79 +123,11 @@ function next() {
             font: '24px Helvetica',
             text: '点击环形特效'
         }
-    }, {
-        modelColor: Cesium.Color.RED,
-        ring: {
-            timePeriod: 5,
-            relativeSize: 1
-        }
-    });
-    Cesiums.EventSystemInstance.setViewer(viewer);
-
-    // Cesiums.eventSystem.onLeftClick(entity, function (e) {
-    //     console.log("left Click!");
-    // })
-
-    // viewer.entities.add(entity)
-    entity.setViewer(viewer);
-    // viewer.entities.add(entity.parent)
-
-    let flyCancelFun;
-
-    entity.onClick(function (position) {
-        this.selected = !this.selected;
     });
 
-    entity.onSelect(() => {
-        flyCancelFun = Cesiums.Cameras.flyAroundPosition(viewer.scene.camera, pos, 50, 30, 0.2);
-    })
-    entity.onRelease(() => {
-        typeof flyCancelFun === "function" && flyCancelFun();
-    })
-
-    //事件接管
-    let eventSystem = Cesiums.EventSystemInstance.getInstance();
-
-    // eventSystem.setListener(entity, Cesiums.EventType.LEFT_CLICK,function (position) {
-    //     console.log(["left click", position]);
-    // })
-    eventSystem.setListener(entity, Cesiums.EventType.LEFT_DOUBLE_CLICK,function (position) {
-        console.log(["leftDoubleClick", position]);
-    })
-    eventSystem.setListener(entity, Cesiums.EventType.MOUSE_MOVE,function (position) {
-        console.log(["mouseMove", position]);
-    })
-    eventSystem.setListener(entity, Cesiums.EventType.LEFT_UP,function (position) {
-        console.log(["leftUp", position]);
-    })
-    eventSystem.setListener(entity, Cesiums.EventType.LEFT_DOWN,function (position) {
-        console.log(["leftDown", position]);
-    })
-    eventSystem.setListener(entity, Cesiums.EventType.DRAW_START,function (position) {
-        console.log(["drawStart", position]);
-    })
-    eventSystem.setListener(entity, Cesiums.EventType.DRAW,function (position) {
-        console.log(["draw", position]);
-    })
-    eventSystem.setListener(entity, Cesiums.EventType.DRAW_END,function (position) {
-        console.log(["drawEnd", position]);
-    })
-    eventSystem.setListener(entity, Cesiums.EventType.MOUSE_MOVE_OUT,function (position) {
-        console.log(["mouseMoveOut", position]);
-    })
-
-    // viewer.trackedEntity = entity;
-    // setTimeout(flyAroundPosition, 3000)
-
-
-    // viewer.scene.camera.flyTo({
-    //     destination: Cesiums.Cartesian3s.formatHeightPlus(pos,5000)
-    // })
-
-    var pos1 = Cesium.Cartesian3.fromDegrees(longitude, latitude, 40);
-    let editableEntity = new Cesiums.EditableEntity({
-        id: 'icon-123451',
-        position: pos1,
+    let entity2 = new Cesium.Entity({
+        id: 'icon-123456',
+        position: pos2,
         // 图标
         billboard: {
             image: 'images/icon_dl.png'
@@ -181,35 +140,152 @@ function next() {
             outlineWidth: 2,
             style: Cesium.LabelStyle.FILL_AND_OUTLINE,
             font: '24px Helvetica',
-            text: '可移动'
+            text: '点击环形特效'
         }
     });
-    editableEntity.setViewer(viewer)
-    editableEntity.relativeHeight = 10;
+    // Cesiums.EventSystemInstance.setViewer(viewer);
 
-    editableEntity.setEditable()
+    // var a =    Cesiums.Cameras.flyAroundPosition(viewer.scene.camera, pos, 50, 30, 0.2);//在缩放和拖动时调用返回的停止方法
+
+
+    // setTimeout(function (){
+    // a();
+    // a();
+    // a();
+    Cesiums.Cameras.runFunAtLeftDownAndZoomOnce(
+        Cesiums.Cameras.flyAroundPosition(viewer.scene.camera, pos, 50, 30, 0.2),//在缩放和拖动时调用返回的停止方法
+        viewer
+    );
+    // },4000)
+
+
+    let eventSystem = Cesiums.EventSystemFactory.createEventSystem(viewer);
+    // Cesiums.eventSystem.onLeftClick(entity, function (e) {
+    //     console.log("left Click!");
+    // })
+
+    viewer.entities.add(entity)
+    viewer.entities.add(entity2)
+    // entity.setViewer(viewer);
+    // viewer.entities.add(entity.parent)
+
+    let flyCancelFun;
+
+    // entity.onClick(function (position) {
+    //     this.selected = !this.selected;
+    // });
+
+    // entity.onSelect(() => {
+    //     Cesiums.Cameras.runFunAtDragAndZoomOnce(Cesiums.Cameras.flyAroundPosition(viewer.scene.camera, pos, 50, 30, 0.2),viewer);
+    // })
+    // entity.onRelease(() => {
+    //     typeof flyCancelFun === "function" && flyCancelFun();
+    // })
+
+    //事件接管
+    // let eventSystem = Cesiums.EventSystemInstance.getInstance();
+
+    // eventSystem.setListener(entity, Cesiums.EventType.LEFT_CLICK,function (position) {
+    //     console.log(["left click", position]);
+    // })
+
+
+    eventSystem.setListenerOnce(entity, Cesiums.EventType.LEFT_DOUBLE_CLICK, function (position, obj) {
+        // console.log(this)
+        console.log({position, obj})
+    })
+
+    eventSystem.setListener(entity, Cesiums.EventType.DRAW_START, function (position, obj, dataTransfer) {
+        // console.log(this)
+        dataTransfer.setData("id",obj.id)
+        console.log({position, obj})
+    })
+
+    eventSystem.setListenerOnce(entity2, Cesiums.EventType.DROP, function (position, obj, dataTransfer) {
+        // console.log(this)
+        console.log(dataTransfer.getData("id"))
+        console.log({position, obj})
+    })
+
+
+    // eventSystem.setListener(entity, Cesiums.EventType.LEFT_DOUBLE_CLICK,function (position) {
+    //     console.log(["leftDoubleClick", position]);
+    // })
+    // eventSystem.setListener(entity, Cesiums.EventType.MOUSE_MOVE,function (position) {
+    //     console.log(["mouseMove", position]);
+    // })
+    // eventSystem.setListener(entity, Cesiums.EventType.LEFT_UP,function (position) {
+    //     console.log(["leftUp", position]);
+    // })
+    // eventSystem.setListener(entity, Cesiums.EventType.LEFT_DOWN,function (position) {
+    //     console.log(["leftDown", position]);
+    // })
+    // eventSystem.setListener(entity, Cesiums.EventType.DRAW_START,function (position) {
+    //     console.log(["drawStart", position]);
+    // })
+    // eventSystem.setListener(entity, Cesiums.EventType.DRAW,function (position) {
+    //     console.log(["draw", position]);
+    // })
+    // eventSystem.setListener(entity, Cesiums.EventType.DRAW_END,function (position) {
+    //     console.log(["drawEnd", position]);
+    // })
+    // eventSystem.setListener(entity, Cesiums.EventType.MOUSE_MOVE_OUT,function (position) {
+    //     console.log(["mouseMoveOut", position]);
+    // })
+
+    // viewer.trackedEntity = entity;
+    // setTimeout(flyAroundPosition, 3000)
+
+
+    // viewer.scene.camera.flyTo({
+    //     destination: Cesiums.Cartesian3s.formatHeightPlus(pos,5000)
+    // })
+
+    // var pos1 = Cesium.Cartesian3.fromDegrees(longitude, latitude, 40);
+    // let editableEntity = new Cesiums.EditableEntity({
+    //     id: 'icon-123451',
+    //     position: pos1,
+    //     // 图标
+    //     billboard: {
+    //         image: 'images/icon_dl.png'
+    //     },
+    //     // 文字标签
+    //     label: {
+    //         pixelOffset: new Cesium.Cartesian2(0, 30),
+    //         fillColor: Cesium.Color.WHITE,
+    //         outlineColor: new Cesium.Color.fromCssColorString('#191970'),
+    //         outlineWidth: 2,
+    //         style: Cesium.LabelStyle.FILL_AND_OUTLINE,
+    //         font: '24px Helvetica',
+    //         text: '可移动'
+    //     }
+    // });
+    // editableEntity.setViewer(viewer)
+    // editableEntity.relativeHeight = 10;
+    //
+    // editableEntity.setEditable()
 
     // editableEntity.setEditable(false)
 
-
-     let compassCallback = new Cesiums.CompassElementBuilder()
-         .setCamera(viewer.camera)
-         .setImageUrl("./images/compress.jpg")//相对于当前html的路径
-         .setClassName("test")//自定义指南针样式
-         .is3DMode(false)//3dmode下，pitch和roll也会旋转
-         .build();
-    document.body.appendChild(compassCallback.compass.element)
-
-     let compassCallback2 = new Cesiums.CompassElementBuilder()
-         .setCamera(viewer.camera)
-         .setImageUrl("./images/compress.jpg")
-         .setClassName("test")
-         .setPosition({x: 200,y:0})
-         .is3DMode(true)
-         .build();
-    document.body.appendChild(compassCallback2.compass.element)
-
-    var drawHelper = new DrawHelper(viewer);
+    //
+    //  let compassCallback = new Cesiums.CompassElementBuilder()
+    //      .setCamera(viewer.camera)
+    //      .setImageUrl("./images/compress.jpg")//相对于当前html的路径
+    //      .setClassName("test")//自定义指南针样式
+    //      .is3DMode(false)//3dmode下，pitch和roll也会旋转
+    //      .build();
+    // document.body.appendChild(compassCallback.compass.element)
+    //
+    //  let compassCallback2 = new Cesiums.CompassElementBuilder()
+    //      .setCamera(viewer.camera)
+    //      .setImageUrl("./images/compress.jpg")
+    //      .setClassName("test")
+    //      .setPosition({x: 200,y:0})
+    //      .is3DMode(true)
+    //      .build();
+    // document.body.appendChild(compassCallback2.compass.element)
+    //
+    // var drawHelper = new DrawHelper(viewer);
 
     // var pos = Cesium.Cartesian3.fromDegrees(longitude + 0.015, latitude, 30);
     // let add = viewer.entities.add({

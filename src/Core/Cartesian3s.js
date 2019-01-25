@@ -1,5 +1,7 @@
 // import * as Cesium from "Cesium";
 
+import {defined} from "../Util/NormalUtils";
+
 export class Cartesian3s {
 
     /**
@@ -56,4 +58,18 @@ export class Cartesian3s {
         })
         return Cesium.Cartesian3.divideByScalar(sum,positions.length,sum);
     }
+
+    /**
+     * 偏移点位1cm左右
+     * @param cartesian3
+     */
+    static offsetPositionSmall(cartesian3){
+        if(!defined(cartesian3)) return;
+        let clone = cartesian3?.clone();
+        clone.x = clone.x + 0.1;
+        clone.y = clone.y + 0.1;
+        clone.z = clone.z + 0.1;
+        return clone;
+    }
+
 }

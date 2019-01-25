@@ -67,7 +67,8 @@
     var heading = 0;
     // 加载 3d-tiles 模型资源到场景中
     var tileset = new Cesium.Cesium3DTileset({
-        url: 'http://192.168.100.233:9002/api/folder/d323b55c37894e3da8d0508eadf93c42/tileset.json'
+        // url: 'http://192.168.100.233:9002/api/folder/d323b55c37894e3da8d0508eadf93c42/tileset.json'
+        url: 'http://192.168.100.233:8080/zhxq-tiles/tileset.json'
     });
     viewer.scene.primitives.add(tileset);
     tileset.readyPromise.then(function(argument) {
@@ -176,7 +177,7 @@
     }
 
 
-    var drawHelper = new DrawHelper(viewer);
+    var drawHelper = new Cesiums.DrawHelper(viewer);
     // var btn = document.querySelector('#tbtn-draw-rect');
     // if (btn) {
     //     btn.addEventListener('click', function(){

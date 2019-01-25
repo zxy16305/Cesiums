@@ -1,3 +1,5 @@
+import * as lodash from "./lodash.min";
+
 /**
  * Created by thomas on 9/01/14.
  *
@@ -26,7 +28,24 @@
 // }(window, function (Cesium) {
     // static variables
     var ellipsoid = Cesium.Ellipsoid.WGS84;
+    let pickTimeout = 100;
 
+    var pickthrottle = {
+        lastPick: null,
+        lastTime: new Date(),
+        pick: function (scene, position, accuracy) {
+            let time = new Date();
+            if (this.lastPick === null || time.getTime() - this.lastTime.getTime() > pickTimeout) {
+                this.lastTime = time;
+                this.lastPick = scene.pick(position, accuracy, accuracy);
+                // debugManager.log("new")
+            }else{
+                // debugManager.log("old")
+            }
+            // if(defined(this.lastPick))
+            return lodash.merge({}, this.lastPick);;
+        }
+    }
     /**
      *
      * @param { Cesium.Cartesian2} position
@@ -36,6 +55,29 @@
     var defaultPickStrategy = function (position, viewer) {
         return viewer.scene.camera.pickEllipsoid(position);
     };
+
+    var getPositionAwayByCamara = function(camera, position, distance) {
+        let totalDistance = Cesium.Cartesian3.distance(camera.position, position, new Cesium.Cartesian3());
+        let subtract = Cesium.Cartesian3.subtract(camera.position, position, new Cesium.Cartesian3());
+        let add = Cesium.Cartesian3.multiplyByScalar(subtract, distance / totalDistance, new Cesium.Cartesian3());
+        return Cesium.Cartesian3.add(position, add, new Cesium.Cartesian3())
+    }
+
+    var customPickStrategy = function (position, scene,back) {
+        if(back == undefined) back = 0;
+        let positionReturn = {};
+        if (Cesium.defined(scene.pick(position)) && scene.pickPositionSupported) {
+            positionReturn = scene.pickPosition(position);
+            // var fromCartesian = Cesium.Cartographic.fromCartesian(viewer.scene.pickPosition(position));
+            // return Cesium.Cartesian3.fromRadians(fromCartesian.longitude, fromCartesian.latitude, 0);
+        } else {
+            var fromCartesian = Cesium.Cartographic.fromCartesian(scene.camera.pickEllipsoid(position));
+            positionReturn = Cesium.Cartesian3.fromRadians(fromCartesian.longitude, fromCartesian.latitude, 0);
+        }
+
+        if (back !== 0) positionReturn = getPositionAwayByCamara(scene.camera, positionReturn, back);
+        return positionReturn;
+    }
 
     /**
      * @constructor
@@ -91,7 +133,9 @@
                 };
 
                 if (_self._handlersMuted == true) return;
-                var pickedObject = scene.pick(markPosition);
+                // var pickedObject = scene.pick(markPosition);
+                var pickedObject =  pickthrottle.pick(scene,markPosition)
+
                 if (mouseOutObject && (!pickedObject || mouseOutObject != pickedObject.primitive)) {
                     !(mouseOutObject.isDestroyed && mouseOutObject.isDestroyed()) && mouseOutObject.mouseOut(markPosition);
                     mouseOutObject = null;
@@ -352,7 +396,7 @@
                                 depthTest: {
                                     enabled: true
                                 },
-                                lineWidth: Math.min(this.strokeWidth || 4.0)
+                                // lineWidth: Math.min(this.strokeWidth || 4.0)
                             }
                         })
                     });
@@ -769,7 +813,7 @@
                         // find index
                         for (var i = 0, I = _self._orderedBillboards.length; i < I && _self._orderedBillboards[i] != billboard; ++i) ;
                         callbacks.dragHandlers.onDrag && callbacks.dragHandlers.onDrag(getIndex(), position);
-                        console.log("drag")
+                        // console.log("drag")
                     }
 
                     function onDragEnd(position) {
@@ -1318,7 +1362,8 @@
                 var handler = new Cesium.ScreenSpaceEventHandler(drawHelper._scene.canvas);
 
                 handler.setInputAction(function (movement) {
-                    var cartesian = drawHelper._scene.camera.pickEllipsoid(movement.endPosition, ellipsoid);
+                    // var cartesian = drawHelper._scene.camera.pickEllipsoid(movement.endPosition, ellipsoid);
+                    var cartesian =  customPickStrategy(movement.endPosition,drawHelper._scene,6);
                     if (cartesian) {
                         onDrag(cartesian);
                     } else {
@@ -1327,7 +1372,7 @@
                 }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
 
                 handler.setInputAction(function (movement) {
-                    onDragEnd(drawHelper._scene.camera.pickEllipsoid(movement.position, ellipsoid));
+                    onDragEnd(customPickStrategy(movement.position,drawHelper._scene,6));
                 }, Cesium.ScreenSpaceEventType.LEFT_UP);
 
                 enableRotation(false);

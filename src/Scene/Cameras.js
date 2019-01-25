@@ -1,6 +1,6 @@
 // import * as Cesium from "Cesium";
 import {computeCirclularAugle} from "../Util/OfficialUtils"
-import {Cartesian3s} from "..";
+import {Cartesian3s, debugManager} from "..";
 import {defined} from "../Util/NormalUtils"
 
 /**
@@ -44,6 +44,64 @@ export class Cameras {
         return () => {
             clearInterval(interval);
             camera.lookAtTransform(Cesium.Matrix4.IDENTITY);
+        }
+    }
+
+    static flyAroundPositionV2(camera, position, radius, second = 20, increment = 0.1, pitch = -45){
+
+
+    }
+
+
+    static runFunAtDragAndZoomOnce(fun = ()=>{},viewer){
+        let eventHandler  = new Cesium.ScreenSpaceEventHandler(viewer.canvas);;
+        var dragHandle = null;
+
+        eventHandler.setInputAction(function (event) {
+            debugManager.log("down");
+            dragHandle && !dragHandle.isDestroyed() && dragHandle.destroy();
+            dragHandle = new Cesium.ScreenSpaceEventHandler(viewer.canvas);
+            dragHandle.setInputAction(function (event) {
+                debugManager.log("move");
+                runFun();
+            }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
+
+        }, Cesium.ScreenSpaceEventType.LEFT_DOWN);
+
+
+        eventHandler.setInputAction(function (event) {
+            debugManager.log("up");
+            dragHandle && !dragHandle.isDestroyed() && dragHandle.destroy();
+        }, Cesium.ScreenSpaceEventType.LEFT_UP);
+
+
+        eventHandler.setInputAction(function (event) {
+            runFun();
+        }, Cesium.ScreenSpaceEventType.WHEEL );
+
+        const runFun = function () {
+            eventHandler && !eventHandler.isDestroyed() && eventHandler.destroy();
+            // eventHandler  && eventHandler.destroy();
+            fun();
+        }
+    }
+
+    static runFunAtLeftDownAndZoomOnce(fun = ()=>{},viewer){
+        let eventHandler  = new Cesium.ScreenSpaceEventHandler(viewer.canvas);;
+
+        eventHandler.setInputAction(function (event) {
+            debugManager.log("down");
+            runFun();
+        }, Cesium.ScreenSpaceEventType.LEFT_DOWN);
+
+        eventHandler.setInputAction(function (event) {
+            runFun();
+        }, Cesium.ScreenSpaceEventType.WHEEL );
+
+        const runFun = function () {
+            eventHandler && !eventHandler.isDestroyed() && eventHandler.destroy();
+            // eventHandler  && eventHandler.destroy();
+            fun();
         }
     }
 

@@ -1,9 +1,16 @@
 // import * as Cesium from "Cesium";
 
+import {debugManager} from "../index";
+
 /**
  * cesium 1.50 ， 加载模型时报错的问题
  */
 export const cesium1_50Patch = () => {
+    if(Cesium.VERSION <"1.50") {
+        debugManager.log("cesium版本小于1.50")
+        return;
+    }
+
     var fixGltf = function (gltf) {
         if (!gltf.extensionsUsed) {
             return;
@@ -57,18 +64,53 @@ export const cesium1_50Patch = () => {
         }
     }
 
-    Object.defineProperties(Cesium.Model.prototype, {
-        _cachedGltf: {
-            set: function (value) {
-                this._vtxf_cachedGltf = value;
-                if (this._vtxf_cachedGltf && this._vtxf_cachedGltf._gltf) {
-                    fixGltf(this._vtxf_cachedGltf._gltf);
+    try {
+        Object.defineProperties(Cesium.Model.prototype, {
+            _cachedGltf: {
+                set: function (value) {
+                    this._vtxf_cachedGltf = value;
+                    if (this._vtxf_cachedGltf && this._vtxf_cachedGltf._gltf) {
+                        fixGltf(this._vtxf_cachedGltf._gltf);
+                    }
+                },
+                get: function () {
+                    return this._vtxf_cachedGltf;
                 }
-            },
-            get: function () {
-                return this._vtxf_cachedGltf;
             }
-        }
-    });
+        });
+    }catch (e) {
+        window.debugMode && console.error(e)
+    }
 }
 
+
+export const cancelPrintTitleProviderErrorInCesium1_50 = () => {
+    Cesium.TileProviderError.handleError = function (previousError, provider, event, message, x, y, level, retryFunction, errorDetails) {
+        var error = previousError;
+        if (!defined(previousError)) {
+            error = new TileProviderError(provider, message, x, y, level, 0, errorDetails);
+        } else {
+            error.provider = provider;
+            error.message = message;
+            error.x = x;
+            error.y = y;
+            error.level = level;
+            error.retry = false;
+            error.error = errorDetails;
+            ++error.timesRetried;
+        }
+
+        if (event.numberOfListeners > 0) {
+            event.raiseEvent(error);
+        } else {
+            // console.log('An error occurred in "' + provider.constructor.name + '": ' + formatError(message));
+        }
+
+        if (error.retry && defined(retryFunction)) {
+            retryFunction();
+        }
+
+        return error;
+    };
+
+}

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=11" />
+
+    <title>DrawHelper - a shape editor plugin for Cesium</title>
+    <script src="../lib/RCesium-1.50-build/Cesium.js" type="application/javascript"></script>
+    <!--<script src="../src/ThirdParty/DrawHelper.js" type="application/javascript"></script>-->
+    <script src="../dist/Cesiums.js" type="application/javascript"></script>
+    <style>
+        @import url(../lib/RCesium-1.50-build/Widgets/widgets.css);
+        @import url(../src/ThirdParty/DrawHelper.css);
+        #cesiumContainer {
+            position: absolute;
+            top: 0px;
+            left: 0;
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            overflow: hidden;
+            padding: 0;
+            font-family: sans-serif;
+        }
+        #toolbar {
+            position: absolute;
+            top: 0px;
+            left: 0;
+            display: inline;
+            margin: 10px;
+            padding: 0px;
+            background: white;
+        }
+        #logging {
+            position: absolute;
+            bottom: 0px;
+            right: 0;
+            display: inline;
+            margin: 10px;
+            padding: 10px;
+            background: white;
+        }
+        body {
+            padding: 0;
+            margin: 0;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body onload="start()">
+
+<div id="cesiumContainer"></div>
+<div id="toolbar">
+</div>
+<div id="logging">
+</div>
+
+<script>
+    var longitude = 120.12674008947434;
+    var latitude = 30.857729240430604;
+    var height = 20;
+    var heading = 0;
+
+    function init() {
+        // 地图底图
+        function setBaseMap(url, credit, subdomains, replace) {
+            var mapProvider = new Cesium.UrlTemplateImageryProvider({
+                url: url,
+                //credit: credit,
+                subdomains: subdomains
+            });
+            var mapLayer = new Cesium.ImageryLayer(mapProvider, Cesium.defaultValue(true, {}));
+            if (replace) this.viewer.scene.imageryLayers.removeAll(false);
+            this.viewer.scene.imageryLayers.add(mapLayer);
+        }
+
+        setBaseMap('http://www.google.cn/maps/vt?lyrs=s&x={x}&y={y}&z={z}', 'Google Map', ["mt0", "mt1", "mt2", "mt3"], true);
+    }
+
+    function start() {
+        // create the almighty cesium widget
+        this.viewer = new Cesium.Viewer('cesiumContainer');
+        this.scene = viewer.scene;
+        init();
+
+        // this.eventSystem = Cesiums.EventSystemFactory.createEventSystem(viewer);
+
+        let entity2 = new Cesium.Entity({
+            id: 'icon-123456',
+            position: Cesium.Cartesian3.fromDegrees(longitude + 0.002, latitude, 40),
+            // 图标
+            billboard: {
+                image: 'images/icon_dl.png'
+            },
+            // 文字标签
+            label: {
+                pixelOffset: new Cesium.Cartesian2(0, 30),
+                fillColor: Cesium.Color.WHITE,
+                outlineColor: new Cesium.Color.fromCssColorString('#191970'),
+                outlineWidth: 2,
+                style: Cesium.LabelStyle.FILL_AND_OUTLINE,
+                font: '24px Helvetica',
+                text: '点击环形特效'
+            }
+        });
+
+        viewer.entities.add(entity2);
+        viewer.zoomTo(entity2)
+
+        customScript();
+    }
+
+
+    function customScript() {
+
+    }
+</script>
+</body>
+</html>

@@ -5,11 +5,14 @@ export const __dirpath = getPathDir();
  */
 /**Scene*/
 export {Cameras} from "./Scene/Cameras"
+export {Scenes} from "./Scene/Scenes"
 import "./Scene/Cameras.css"
 
 /**Core*/
 export {Cartesian3s} from "./Core/Cartesian3s"
-export {EventSystemInstance,EventType} from "./Core/EventSystem"
+export {EventSystemInstance, /*EventType*/} from "./Core/EventSystem"
+export {EventSystemFactory, EventType as EventTypeV2, EventType} from "./Core/EventSystemV2"
+export {EventUtils} from "./Core/EventUtils"
 export {Debugs} from "./Core/Debugs";
 
 
@@ -21,13 +24,16 @@ export {BuildingHightlightBuilder} from "./DataSources/BuildingHightlightBuilder
 
 /**Util**/
 import * as officialUtils from "./Util/OfficialUtils";
+
 export const OfficialUtils = officialUtils;
+export {Pickthrottle} from "./Util/InnerUtils"
 
 /**Widgets**/
-export {Settings} from  "./Widgets/Settings";
-export {cesium1_50Patch} from  "./Widgets/Patchs";
+export {Settings} from "./Widgets/Settings";
+export {cesium1_50Patch, cancelPrintTitleProviderErrorInCesium1_50} from "./Widgets/Patchs";
 export {CompassElementBuilder} from "./Widgets/Compass"
-
+// export {DraggableCoordinate} from "./Widgets/DraggableCoordinate"
+export {DraggableCoordinate} from "./Widgets/DraggableCoordinate2"
 
 /*ThirdParty*/
 export {DrawHelper} from "./ThirdParty/DrawHelper"
@@ -39,15 +45,15 @@ export {ChoiceHelper} from "./ThirdParty/ChoiceHelper"
 import "./ThirdParty/DrawHelper.css"
 
 export const debugManager = {
-    _debug : false,
-    set debug(enable){
+    _debug: false,
+    set debug(enable) {
         this._debug = enable
     },
-    get debug(){
+    get debug() {
         return this._debug;
     },
     log: function (message) {
-        if(this._debug){
+        if (this._debug) {
             console.groupCollapsed(message)
             console.trace(message)
             console.groupEnd()
@@ -56,13 +62,12 @@ export const debugManager = {
 }
 
 
-
 //遍历script 获取src路径
 function getPathDir() {
     let scriptSrc = "";
     let nodeList = document.querySelectorAll("script");
-    for(let i = 0; i< nodeList.length;i++){
-        if(/Cesiums[^\/]*$/.test(nodeList.item(i).src)){
+    for (let i = 0; i < nodeList.length; i++) {
+        if (/Cesiums[^\/]*$/.test(nodeList.item(i).src)) {
             scriptSrc = nodeList.item(i).src;
             break;
         }

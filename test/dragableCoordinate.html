@@ -2,9 +2,169 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>$Title$</title>
+    <title>DrawHelper - a shape editor plugin for Cesium</title>
+    <script src="../lib/RCesium-1.50-build/Cesium.js" type="application/javascript"></script>
+    <!--<script src="../src/ThirdParty/DrawHelper.js" type="application/javascript"></script>-->
+    <script src="../dist/Cesiums.js" type="application/javascript"></script>
+    <style>
+        @import url(../lib/RCesium-1.50-build/Widgets/widgets.css);
+        @import url(../src/ThirdParty/DrawHelper.css);
+        #cesiumContainer {
+            position: absolute;
+            top: 0px;
+            left: 0;
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            overflow: hidden;
+            padding: 0;
+            font-family: sans-serif;
+        }
+        #toolbar {
+            position: absolute;
+            top: 0px;
+            left: 0;
+            display: inline;
+            margin: 10px;
+            padding: 0px;
+            background: white;
+        }
+        #logging {
+            position: absolute;
+            bottom: 0px;
+            right: 0;
+            display: inline;
+            margin: 10px;
+            padding: 10px;
+            background: white;
+        }
+        body {
+            padding: 0;
+            margin: 0;
+            overflow: hidden;
+        }
+    </style>
 </head>
-<body>
-$END$
+<body onload="start()">
+
+<div id="cesiumContainer"></div>
+<div id="toolbar">
+</div>
+<div id="logging">
+</div>
+
+<script>
+    function start() {
+        // create the almighty cesium widget
+        var viewer = new Cesium.Viewer('cesiumContainer');
+        var scene = viewer.scene;
+
+        Cesiums.Settings.setBaseMap(viewer)
+        this. draggableCoordinate = new Cesiums.DraggableCoordinate({
+            viewer, size : 10, position : Cesium.Cartesian3.fromDegrees(-100.0, 40.0, 2000.0)
+        });
+        //
+        // viewer.camera.changed.addEventListener((e)=>{console.log(e)})
+        // var greenCylinder = viewer.entities.add({
+        //     position: Cesium.Cartesian3.fromDegrees(-100.0, 40.0, 2000.0),
+        //     model: {
+        //         uri:  "../resources/axisz.glb",
+        //         scale: 100000,
+        //         color:Cesium.Color.GREEN,
+        //         maximumScale: 1,
+        //         // color: modelColor,
+        //         show: true
+        //     }
+        // });
+        //
+        // var redCylinder = viewer.entities.add({
+        //     position: Cesium.Cartesian3.fromDegrees(-100.0, 40.0, 2000.0),
+        //     model: {
+        //         uri:  "../resources/axisx.glb",
+        //         scale: 100000,
+        //         color:Cesium.Color.RED,
+        //
+        //         maximumScale: 1,
+        //         // color: modelColor,
+        //         show: true
+        //     }
+        // });
+        //
+        // var outlineOnly = viewer.entities.add({
+        //     name : 'Yellow box outline',
+        //     position: Cesium.Cartesian3.fromDegrees(-100.0, 40.0, 2000),
+        //     box : {
+        //         dimensions : new Cesium.Cartesian3(400000.0, 300000.0, 500000.0),
+        //         fill : false,
+        //         outline : true,
+        //         outlineColor : Cesium.Color.YELLOW
+        //     }
+        // });
+
+        // var yellowCylinder = viewer.entities.add({
+        //     position: Cesium.Cartesian3.fromDegrees(-100.0, 40.0, 2000.0),
+        //     model: {
+        //         uri:  "../resources/axisy.glb",
+        //         scale: 10,
+        //         color:Cesium.Color.RED,
+        //
+        //         maximumScale: 1,
+        //         // color: modelColor,
+        //         show: true
+        //     }
+        // });
+        //
+        // // var redCone = viewer.entities.add({
+        // //     name : 'Red cone',
+        // //     position: Cesium.Cartesian3.fromDegrees(-100.0, 40.0, 200000.0),
+        // //     cylinder : {
+        // //         length : 400000.0,
+        // //         topRadius : 20000.0,
+        // //         bottomRadius : 20000.0,
+        // //         material : Cesium.Color.RED
+        // //     }
+        // // });
+        //
+
+
+        var pinBuilder = new Cesium.PinBuilder();
+        this.questionPin = viewer.entities.add({
+            name : 'Question mark',
+            position : Cesium.Cartesian3.fromDegrees(-100.0, 40.0, 2000.0),
+            billboard : {
+                image : pinBuilder.fromText('?', Cesium.Color.BLACK, 48).toDataURL(),
+                verticalOrigin : Cesium.VerticalOrigin.BOTTOM
+            }
+        });
+        viewer.zoomTo(viewer.entities);
+
+
+        let eventHandler = new Cesium.ScreenSpaceEventHandler(viewer.canvas);
+
+        eventHandler.setInputAction(function (event) {
+            let position = event.position;
+            // if (Cesium.defined(scene.pick(position)) && scene.pickPositionSupported) {
+            //     var positionReturn = scene.pickPosition(position);
+            //
+            //     console.log(["pick at model",Cesium.Cartographic.fromCartesian(positionReturn)])
+            // }
+            //
+            // var fromCartesian = Cesium.Cartographic.fromCartesian(scene.camera.pickEllipsoid(position));
+            // positionReturn = Cesium.Cartesian3.fromRadians(fromCartesian.longitude, fromCartesian.latitude, 0);
+            // console.log(['pick at ellipsoid',positionReturn]);
+            console.log(scene.pick(position));
+            console.log(viewer.camera.getPickRay(position))
+        }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
+
+        let originalFunction =  Cesium.CesiumWidget.prototype.showErrorPanel;
+        Cesium.CesiumWidget.prototype.showErrorPanel = function(title,content,error){
+            console.log(title,content,error,originalFunction)
+        }
+
+
+        viewer.cesiumWidget.showErrorPanel("test","test",new Cesium.RuntimeError("???"))
+        // throw new Cesium.RuntimeError("???")
+    }
+</script>
 </body>
 </html>

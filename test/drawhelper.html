@@ -2,10 +2,14 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=11" />
+
     <title>DrawHelper - a shape editor plugin for Cesium</title>
     <script src="../lib/RCesium-1.50-build/Cesium.js"></script>
     <!--<script src="../src/ThirdParty/DrawHelper.js"></script>-->
-    <script src="./DrawHelper.js"></script>
+    <script src="./DrawHelper1.js"></script>
+    <script src="../dist/Cesiums.js"></script>
+    <link rel="stylesheet" href="../dist/Cesiums.css">
     <style>
         @import url(../lib/RCesium-1.50-build/Widgets/widgets.css);
         @import url(../src/ThirdParty/DrawHelper.css);
@@ -61,7 +65,14 @@
 
         var scene = cesiumWidget.scene;
         // start the draw helper to enable shape creation and editing
+        var DrawHelper = Cesiums.DrawHelper;
         var drawHelper = new DrawHelper(cesiumWidget);
+
+        // drawHelper.startDrawingExtent({
+        //     callback:function(extent){
+        //         console.log(extent)
+        //     }
+        // });
         var toolbar = drawHelper.addToolbar(document.getElementById("toolbar"), {
             buttons: ['marker', 'polyline', 'polygon', 'circle', 'extent']
         });

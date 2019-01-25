@@ -1,13 +1,17 @@
 /**
  * 可拖动的坐标系
+ * screen fixed
  */
 import {CalcTwoLineCommonVertByFourPoints} from "../Util/Math";
 import {__dirpath, debugManager, Settings} from "../index";
 
 export class DraggableCoordinate {
-    constructor({viewer, size = 10000, position = new Cesium.Cartesian3()} = {}) {
+    constructor({viewer, size = 10000, screenSize = 200, defaultSize = 1 ,position = new Cesium.Cartesian3()} = {}) {
         this.position = position;
-        this.size = size;
+        // this.size = size;
+        this.screenSize = screenSize;
+        // this.size = this._calcSize(screenSize , Cesium.Cartesian3.distance(this.position,viewer.camera.position))
+        this.size = defaultSize;
         this.viewer = viewer;
         this.bindEntities = [];
         this.onDragCallback = () => {
@@ -18,14 +22,20 @@ export class DraggableCoordinate {
         this._createAxis(size)
     }
 
+    _calcSize(screenSize , distance){
+        // return screenSize * distance * 10000/ 1012.5/124;
+        return screenSize * distance /142290
+    }
+
     _createAxis(size) {
         //校正相机坐标变化
         this.onCameraChanged = () => {
-            let multi = this.oDistance / Cesium.Cartesian3.distance(this.oPosition, this.viewer.camera.position);
-            this.delta = {
-                x: this.oDetal.x * multi,
-                y: this.oDetal.y * multi
-            }
+            // let multi = this.oDistance / Cesium.Cartesian3.distance(this.oPosition, this.viewer.camera.position);
+            // this.delta = {
+            //     x: this.oDetal.x * multi,
+            //     y: this.oDetal.y * multi
+            // }
+            this.size = this._calcSize(this.screenSize , Cesium.Cartesian3.distance(this.position,this.viewer.camera.position))
         }
 
         this.axisz = this.viewer.entities.add({
@@ -34,9 +44,11 @@ export class DraggableCoordinate {
             }, false),
             model: {
                 uri: __dirpath + "/resources/axisz.glb",
-                scale: size,
+                scale: new Cesium.CallbackProperty((time, result) => {
+                    return this.size;
+                }, false),
                 color: Cesium.Color.GREEN,
-                maximumScale: 1,
+                // maximumScale: 1,
                 // color: modelColor,
                 show: true
             }
@@ -48,10 +60,12 @@ export class DraggableCoordinate {
             }, false),
             model: {
                 uri: __dirpath + "/resources/axisx.glb",
-                scale: size,
+                scale: new Cesium.CallbackProperty((time, result) => {
+                    return this.size;
+                }, false),
                 color: Cesium.Color.RED,
 
-                maximumScale: 1,
+                // maximumScale: 1,
                 // color: modelColor,
                 show: true
             }
@@ -63,14 +77,17 @@ export class DraggableCoordinate {
             }, false),
             model: {
                 uri: __dirpath + "/resources/axisy.glb",
-                scale: size,
+                scale: new Cesium.CallbackProperty((time, result) => {
+                    return this.size;
+                }, false),
                 color: Cesium.Color.YELLOW,
 
-                maximumScale: 1,
+                // maximumScale: 1,
                 // color: modelColor,
                 show: true
             }
         });
+        this.viewer.camera.changed.addEventListener(this.onCameraChanged);
 
         this.eventHandler = new Cesium.ScreenSpaceEventHandler(this.viewer.canvas);
 
@@ -79,7 +96,7 @@ export class DraggableCoordinate {
         this.eventHandler.setInputAction((event) => {
             // debugManager.log("down");
             this.dragHandle && !this.dragHandle.isDestroyed() && this.dragHandle.destroy();
-            let pick = this.viewer.scene.pick(event.position);
+            let pick = this.viewer.scene.pick(event.position,6,6);
             if (pick && pick.id) {
                 if (pick.id.id === this.axisz.id) {
                     this.pick = CalcType.Z;
@@ -106,7 +123,6 @@ export class DraggableCoordinate {
             ///记录当前坐标 用于计算相机坐标距离变化比例
             this.oPosition = this.position.clone();
             this.oDistance = Cesium.Cartesian3.distance(this.position, this.viewer.camera.position);
-            this.viewer.camera.changed.addEventListener(this.onCameraChanged);
 
 
             this.dragHandle = new Cesium.ScreenSpaceEventHandler(this.viewer.canvas);
@@ -148,7 +164,6 @@ export class DraggableCoordinate {
 
     _DestroyDragHandle() {
         if (this._onDrag) {
-            this.viewer.camera.changed.removeEventListener(this.onCameraChanged)
             Settings.enableRotation(this.viewer, true);
             this._onDrag = false
         }
@@ -245,6 +260,7 @@ export class DraggableCoordinate {
     }
 
     destroy() {
+        this.viewer.camera.changed.removeEventListener(this.onCameraChanged)
         this.viewer.entities.remove(this.axisz)
         this.viewer.entities.remove(this.axisx)
         this.viewer.entities.remove(this.axisy)

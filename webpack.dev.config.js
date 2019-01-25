@@ -71,7 +71,7 @@ module.exports = {
             loaders: [{
                 loader: 'babel-loader',
                 options: {
-                    presets: ['es2015'],
+                    // presets: ['es2015'],
                     cacheDirectory: true
                 }
             }]
